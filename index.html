@@ -8,7 +8,8 @@
 			margin: 0px;
 		}
 		#header {
-			width: 100%;
+			position: absolute;
+			width: 500px;
 		}
 		#flr {
 			width: 100%;
@@ -20,33 +21,50 @@
 		#erm {
 			width: 49%;
 		}
+		#bdy {
+			left: 500px;
+			position: absolute;
+			width: 62%
+		}
 		#imgLoader {
-			width: 500px;
+			height: 500px;
 		}
 		.door {
 			position: absolute;
 			border-radius: 5px;
 			background: red;
+		}
+		.vpath {
 			width: 0px;
+			height: 5px;
+		}
+		.hpath {
+			width: 5px;
 			height: 0px;
 		}
-		#rm7 {
-			width: 5px;
-			height: 5px;
-			top: 527px;
-			left: 270px;
+		#f0rm7 {
+			top: 445px;
+			left: 245px;
 		}
-		#rm10 {
-			width: 5px;
-			height: 5px;
-			top: 527px;
-			left: 295px;
+		#f0rm10 {
+			top: 445px;
+			left: 265px;
 		}
-		#rm18 {
-			width: 5px;
-			height: 5px;
-			top: 527px;
-			left: 430px;
+		#f0rm18 {
+			top: 445px;
+			left: 391px;
+		}
+		#f0rm20 {
+			top: 410px;
+			left: 391px;
+		}
+		#f0rm21 {
+			top: 395px;
+			left: 391px;
+		}
+		#display {
+			float: right;
+			background-color: white;
 		}
 
 	</style>
@@ -55,19 +73,24 @@
 <div id='header'>
 	<select id='flr'><option selected="">0</option></select>
 	<select id='srm' onchange="startRoom()">
-		<option value=""></option>
-		<option value="rm7">7</option>
-		<option value="rm10">10</option>
+		<option value="">Start Room</option>
+		<option value="f0rm7">7</option>
+		<option value="f0rm10">10</option>
 	</select>
-	<select id='erm'>
-		<option value="rm18">18</option>
+	<select id='erm' onchange="endRoom()">
+		<option value="">End Room</option>
+		<option value="f0rm21">21</option>
+		<option value="f0rm20">20</option>
 	</select>
 </div>
 <div id='bdy'>
-	<div class="door" id="rm7"></div>
-	<div class="door" id="rm10"></div>
-	<div class="door" id="rm18"></div>
-	<img id="imgLoader" position="absolute"  src="0.jpg">
+	<div id="display"></div>
+	<div class="door vpath" id="f0rm7"></div>
+	<div class="door vpath" id="f0rm10"></div>
+	<div class="door hpath" id="f0rm18"></div>
+	<div class="door vpath" id="f0rm20"></div>
+	<div class="door vpath" id="f0rm21"></div>
+	<img id="imgLoader" src="0.jpg">
 </div>
 <script type="text/javascript">
 	//document.getElementById("srm").addEventListener("change",startRoom,false);
@@ -75,31 +98,105 @@
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	console.log('working');
-	document.getElementById("rm7").style.width = "0px";
-	document.getElementById("rm10").style.width = "0px";
-	document.getElementById("rm18").style.width = "0px";
-	var flg = 1;
+	var sflg = 1, eflg = 1;
+	document.addEventListener('mousedown', onMouseDown, false);
 	async function startRoom() {
-		if(flg){
+		if(sflg){
 			document.getElementById('srm').remove(0);
-			flg = 0;
+			sflg = 0;
 		}
-		document.getElementById("rm7").style.width = "0px";
-		document.getElementById("rm10").style.width = "0px";
+		document.getElementById("f0rm7").style.width = "0px";
+		document.getElementById("f0rm10").style.width = "0px";
+		document.getElementById("f0rm18").style.height = "0px";
+		document.getElementById("f0rm20").style.width = "0px";
+		document.getElementById("f0rm21").style.width = "0px";
 		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
-		var i;
 		var lim;
-		if(document.getElementById('srm').value == "rm7"){
-			lim = 170;
+		if(document.getElementById('erm').value != ""){
+			if(document.getElementById('srm').value == "f0rm7"){
+				lim = 152;
+			}
+			else if(document.getElementById('srm').value == "f0rm10"){
+				lim = 132;
+			}
+			for (var i = 1; i < lim; i++) {
+				document.getElementById(document.getElementById('srm').value).style.width = i.toString()+"px";
+				await sleep(5);
+			}
+			var ermt = document.getElementById('erm').value;
+			var rtop = 446, rh = 0, llim;
+			if(ermt == "f0rm21"){
+				llim = 395;
+			}
+			else if(ermt == "f0rm20"){
+				llim = 410;
+			}
+			for (var i = rtop; i >= llim; i--) {
+				rh ++;
+				document.getElementById("f0rm18").style.top = i.toString()+"px";
+				document.getElementById("f0rm18").style.height = rh.toString()+"px";
+				await sleep(5);
+			}
+			for (var i = 1; i < 20; i++) {
+				document.getElementById(document.getElementById('erm').value).style.width = i.toString()+"px";
+				await sleep(5);
+			}
 		}
-		else{
-			lim = 145;
-		}
-		for(i=1;i<lim;i++){
-			document.getElementById(document.getElementById('srm').value).style.width = i.toString()+"px";
-			await sleep(5);
-		}
+
 	}
+	async function endRoom() {
+		if(eflg){
+			document.getElementById('erm').remove(0);
+			eflg = 0;
+		}
+		document.getElementById("f0rm7").style.width = "0px";
+		document.getElementById("f0rm10").style.width = "0px";
+		document.getElementById("f0rm18").style.height = "0px";
+		document.getElementById("f0rm20").style.width = "0px";
+		document.getElementById("f0rm21").style.width = "0px";
+		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
+		var lim;
+		if(document.getElementById('srm').value != ""){
+			if(document.getElementById('srm').value == "f0rm7"){
+				lim = 152;
+			}
+			else if(document.getElementById('srm').value == "f0rm10"){
+				lim = 132;
+			}
+			for (var i = 1; i < lim; i++) {
+				document.getElementById(document.getElementById('srm').value).style.width = i.toString()+"px";
+				await sleep(5);
+			}
+			var ermt = document.getElementById('erm').value;
+			var rtop = 446, rh = 0, llim;
+			if(ermt == "f0rm21"){
+				llim = 395;
+			}
+			else if(ermt == "f0rm20"){
+				llim = 410;
+			}
+			for (var i = rtop; i >= llim; i--) {
+				rh ++;
+				document.getElementById("f0rm18").style.top = i.toString()+"px";
+				document.getElementById("f0rm18").style.height = rh.toString()+"px";
+				await sleep(5);
+			}
+			for (var i = 1; i < 20; i++) {
+				document.getElementById(document.getElementById('erm').value).style.width = i.toString()+"px";
+				await sleep(5);
+			}
+		}
+
+	}
+	// mouse down handler
+	function onMouseDown(evt) {
+	  var mousex = event.clientX;//(event.clientX / window.innerWidth) * 2 - 1;
+	  var mousey = event.clientY;//-(event.clientY / window.innerHeight) * 2 + 1;
+	  //alert("X: "+mousex+"; Y: "+mousey);
+	  //console.log("Mouse Clicked:: X: "+mousex+"; Y: "+mousey);
+	  document.getElementById('display').innerHTML = "Mouse Clicked:: X: "+mousex+"; Y: "+mousey;
+	}
+
 </script>
 
 </body>
