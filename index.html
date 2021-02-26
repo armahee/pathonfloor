@@ -9,17 +9,19 @@
 		}
 		#header {
 			position: absolute;
-			width: 500px;
+			width: 400px;
+			background-color: white;
+			padding: 20px;
 		}
 		#flr {
-			width: 100%;
+			//width: 100%;
 		}
 		#srm {
-			margin-left: 1%;
-			width: 49%;
+			//margin-left: 1%;
+			//width: 49%;
 		}
 		#erm {
-			width: 49%;
+			//width: 49%;
 		}
 		#bdy {
 			left: 500px;
@@ -71,12 +73,15 @@
 </head>
 <body>
 <div id='header'>
-	<select id='flr'><option selected="">0</option></select>
+	<label for="flr">Choose a floor:</label>
+	<select id='flr'><option selected="">0</option></select><br><br>
+	<label for="srm">Select starting room:</label>
 	<select id='srm' onchange="startRoom()">
 		<option value="">Start Room</option>
 		<option value="f0rm7">7</option>
 		<option value="f0rm10">10</option>
-	</select>
+	</select><br><br>
+	<label for="erm">Select ending room:</label>
 	<select id='erm' onchange="endRoom()">
 		<option value="">End Room</option>
 		<option value="f0rm21">21</option>
