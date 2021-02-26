@@ -110,11 +110,14 @@
 			document.getElementById('srm').remove(0);
 			sflg = 0;
 		}
-		document.getElementById("f0rm7").style.width = "0px";
-		document.getElementById("f0rm10").style.width = "0px";
-		document.getElementById("f0rm18").style.height = "0px";
-		document.getElementById("f0rm20").style.width = "0px";
-		document.getElementById("f0rm21").style.width = "0px";
+		var items = document.getElementsByClassName('vpath');
+		for (var i=0; i < items.length; i++) {
+			items[i].style.width = '0px';
+		}
+		items = document.getElementsByClassName('hpath');
+		for (var i=0; i < items.length; i++) {
+			items[i].style.height = '0px';
+		}
 		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
 		var lim;
 		if(document.getElementById('erm').value != ""){
@@ -154,11 +157,14 @@
 			document.getElementById('erm').remove(0);
 			eflg = 0;
 		}
-		document.getElementById("f0rm7").style.width = "0px";
-		document.getElementById("f0rm10").style.width = "0px";
-		document.getElementById("f0rm18").style.height = "0px";
-		document.getElementById("f0rm20").style.width = "0px";
-		document.getElementById("f0rm21").style.width = "0px";
+		var items = document.getElementsByClassName('vpath');
+		for (var i=0; i < items.length; i++) {
+			items[i].style.width = '0px';
+		}
+		items = document.getElementsByClassName('hpath');
+		for (var i=0; i < items.length; i++) {
+			items[i].style.height = '0px';
+		}
 		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
 		var lim;
 		if(document.getElementById('srm').value != ""){
