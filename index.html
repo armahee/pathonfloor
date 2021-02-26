@@ -76,13 +76,13 @@
 	<label for="flr">Choose a floor:</label>
 	<select id='flr'><option selected="">0</option></select><br><br>
 	<label for="srm">Select starting room:</label>
-	<select id='srm' onchange="startRoom()">
+	<select id='srm' onchange="startRoom(),showPath()">
 		<option value="">Start Room</option>
 		<option value="f0rm7">7</option>
 		<option value="f0rm10">10</option>
 	</select><br><br>
 	<label for="erm">Select ending room:</label>
-	<select id='erm' onchange="endRoom()">
+	<select id='erm' onchange="endRoom(),showPath()">
 		<option value="">End Room</option>
 		<option value="f0rm21">21</option>
 		<option value="f0rm20">20</option>
@@ -105,58 +105,20 @@
 	console.log('working');
 	var sflg = 1, eflg = 1;
 	document.addEventListener('mousedown', onMouseDown, false);
-	async function startRoom() {
+	function startRoom() {
 		if(sflg){
 			document.getElementById('srm').remove(0);
 			sflg = 0;
 		}
-		var items = document.getElementsByClassName('vpath');
-		for (var i=0; i < items.length; i++) {
-			items[i].style.width = '0px';
-		}
-		items = document.getElementsByClassName('hpath');
-		for (var i=0; i < items.length; i++) {
-			items[i].style.height = '0px';
-		}
-		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
-		var lim;
-		if(document.getElementById('erm').value != ""){
-			if(document.getElementById('srm').value == "f0rm7"){
-				lim = 152;
-			}
-			else if(document.getElementById('srm').value == "f0rm10"){
-				lim = 132;
-			}
-			for (var i = 1; i < lim; i++) {
-				document.getElementById(document.getElementById('srm').value).style.width = i.toString()+"px";
-				await sleep(5);
-			}
-			var ermt = document.getElementById('erm').value;
-			var rtop = 446, rh = 0, llim;
-			if(ermt == "f0rm21"){
-				llim = 395;
-			}
-			else if(ermt == "f0rm20"){
-				llim = 410;
-			}
-			for (var i = rtop; i >= llim; i--) {
-				rh ++;
-				document.getElementById("f0rm18").style.top = i.toString()+"px";
-				document.getElementById("f0rm18").style.height = rh.toString()+"px";
-				await sleep(5);
-			}
-			for (var i = 1; i < 20; i++) {
-				document.getElementById(document.getElementById('erm').value).style.width = i.toString()+"px";
-				await sleep(5);
-			}
-		}
 
 	}
-	async function endRoom() {
+	function endRoom() {
 		if(eflg){
 			document.getElementById('erm').remove(0);
 			eflg = 0;
 		}
+	}
+	async function showPath() {
 		var items = document.getElementsByClassName('vpath');
 		for (var i=0; i < items.length; i++) {
 			items[i].style.width = '0px';
@@ -167,7 +129,7 @@
 		}
 		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
 		var lim;
-		if(document.getElementById('srm').value != ""){
+		if(document.getElementById('srm').value != "" && document.getElementById('erm').value != ""){
 			if(document.getElementById('srm').value == "f0rm7"){
 				lim = 152;
 			}
