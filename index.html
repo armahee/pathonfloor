@@ -432,12 +432,14 @@
 		iml.src = '';
 		if(document.getElementById('flr').value != ''){
 			var floorNum = parseInt(document.getElementById('flr').value);
+			iml.display = 'none';
 			iml.src = img[floorNum];
 			iml.onload = function () {
 				var elementWidth = heightCrossBrowser(iml);
 				pathScale = elementWidth / imgScale;
 				iml.style.height = imgScale+'px';
 			}
+			iml.display = 'block';
 			var srml = document.createElement('label');
 			srml.innerHTML = 'Select Start Position: ';
 			srml.for = 'srm';
