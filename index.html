@@ -28,9 +28,6 @@
 			position: absolute;
 			width: 62%
 		}
-		#imgLoader {
-			height: 500px;
-		}
 		.door {
 			position: absolute;
 			border-radius: 5px;
@@ -65,7 +62,9 @@
 			left: 391px;
 		}
 		#display {
-			//float: right;
+			float: right;
+			display: none;
+			//background-color: white;
 		}
 
 	</style>
@@ -73,93 +72,426 @@
 <body>
 <div id='header'>
 	<label for="flr">Choose a floor:</label>
-	<select id='flr'><option selected="">0</option></select><br><br>
-	<label for="srm">Select starting room:</label>
-	<select id='srm' onchange="startRoom(),showPath()">
-		<option value="">Start Room</option>
-		<option value="f0rm7">7</option>
-		<option value="f0rm10">10</option>
+	<select id='flr' onchange="changeFloor()">
+		<option selected="" value="">Select a floor</option>
+		<option value="0">Ground Floor</option>
+		<option value="1">Lower First Floor</option>
+		<option value="2">First Floor</option>
+		<option value="3">Second Floor</option>
 	</select><br><br>
-	<label for="erm">Select ending room:</label>
-	<select id='erm' onchange="endRoom(),showPath()">
-		<option value="">End Room</option>
-		<option value="f0rm21">21</option>
-		<option value="f0rm20">20</option>
-	</select><br><br>
-	<div id="display"></div>
 </div>
 <div id='bdy'>
-	<div class="door vpath" id="f0rm7"></div>
-	<div class="door vpath" id="f0rm10"></div>
-	<div class="door hpath" id="f0rm18"></div>
-	<div class="door vpath" id="f0rm20"></div>
-	<div class="door vpath" id="f0rm21"></div>
-	<img id="imgLoader" src="0.jpg">
+	<img id="imgLoader" src="">
 </div>
 <script type="text/javascript">
 	//document.getElementById("srm").addEventListener("change",startRoom,false);
+	function sleepFor( sleepDuration ){
+		var now = new Date().getTime();
+		while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
+	}
 	function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	console.log('working');
-	var sflg = 1, eflg = 1;
-	document.addEventListener('mousedown', onMouseDown, false);
-	function startRoom() {
-		if(sflg){
-			document.getElementById('srm').remove(0);
-			sflg = 0;
+	var straitLine_i = 0, drawIsRunning = false, imgScale = 600, pathScale = 1;
+	async function drawSLine(fromX, fromY, toX, toY) {
+		fromX = fromX / pathScale;
+		fromY = fromY / pathScale;
+		toX = toX / pathScale;
+		toY = toY / pathScale;
+		drawIsRunning = true;
+		var info = document.createElement('div');
+		info.style.position = 'absolute';
+		info.style.borderRadius = '5px';
+		info.style.left = fromX+'px';
+		info.style.top = fromY+'px';
+		info.style.backgroundColor = 'red';
+		info.style.zIndex = '1';
+		info.id = 'straitLine'+straitLine_i;
+		document.getElementById('bdy').appendChild(info);
+		if(fromX == toX){
+			if(toY > fromY){
+				info.style.width = '5px';
+				info.style.height = '0px';
+				for (var i = 1; i <= toY - (fromY - 1); i++) {
+					drawIsRunning = true;
+					info.style.height = i.toString()+"px";
+					await sleep(5);
+				}
+			}
+			else if(toY < fromY){
+				info.style.width = '5px';
+				info.style.height = '0px';
+				for (var i = 1; i <= fromY - toY; i++) {
+					drawIsRunning = true;
+					info.style.top = (parseInt(info.style.top, 10) - 1)+'px';
+					info.style.height = i.toString()+'px';
+					await sleep(5);
+				}
+			}
+			else{
+				info.style.width = '5px';
+				info.style.height = '5px';
+			}
 		}
+		else if(fromY == toY){
+			if(toX > fromX){
+				info.style.width = '0px';
+				info.style.height = '5px';
+				for (var i = 1; i <= toX - (fromX - 1); i++) {
+					drawIsRunning = true;
+					info.style.width = i.toString()+'px';
+					await sleep(5);
+				}
+			}
+			else if(toX < fromX){
+				info.style.width = '0px';
+				info.style.height = '5px';
+				for (var i = 1; i <= fromX - (toX - 1); i++) {
+					drawIsRunning = true;
+					info.style.left = (parseInt(info.style.left, 10) - 1)+'px';
+					info.style.width = i.toString()+'px';
+					await sleep(5);
+				}
+			}
+			else{
+				info.style.width = '5px';
+				info.style.height = '5px';
+			}
+		}
+		else{
+			alert('Sorry! Unable to draw Strait Line');
+		}
+		//animate(info.id, toX, toY);
+		drawIsRunning = false;
+	}
 
-	}
-	function endRoom() {
-		if(eflg){
-			document.getElementById('erm').remove(0);
-			eflg = 0;
+	function removeLines() {
+		var linepar = document.getElementById('bdy');
+		while(straitLine_i){
+			straitLine_i--;
+			linepar.removeChild(document.getElementById('straitLine'+straitLine_i));
 		}
 	}
-	async function showPath() {
-		var items = document.getElementsByClassName('vpath');
-		for (var i=0; i < items.length; i++) {
-			items[i].style.width = '0px';
-		}
-		items = document.getElementsByClassName('hpath');
-		for (var i=0; i < items.length; i++) {
-			items[i].style.height = '0px';
-		}
-		//console.log('ar: '+document.getElementById(document.getElementById('srm').value).style.width);
-		var lim;
-		if(document.getElementById('srm').value != "" && document.getElementById('erm').value != ""){
-			if(document.getElementById('srm').value == "f0rm7"){
-				lim = 152;
-			}
-			else if(document.getElementById('srm').value == "f0rm10"){
-				lim = 132;
-			}
-			for (var i = 1; i < lim; i++) {
-				document.getElementById(document.getElementById('srm').value).style.width = i.toString()+"px";
-				await sleep(5);
-			}
-			var ermt = document.getElementById('erm').value;
-			var rtop = 446, rh = 0, llim;
-			if(ermt == "f0rm21"){
-				llim = 395;
-			}
-			else if(ermt == "f0rm20"){
-				llim = 410;
-			}
-			for (var i = rtop; i >= llim; i--) {
-				rh ++;
-				document.getElementById("f0rm18").style.top = i.toString()+"px";
-				document.getElementById("f0rm18").style.height = rh.toString()+"px";
-				await sleep(5);
-			}
-			for (var i = 1; i < 20; i++) {
-				document.getElementById(document.getElementById('erm').value).style.width = i.toString()+"px";
-				await sleep(5);
-			}
-		}
+	/*drawSLine(160, 10, 590, 10);
+	straitLine_i ++;
+	drawSLine(590, 10, 590, 485);
+	straitLine_i ++;
+	drawSLine(595, 485, 165, 485);
+	straitLine_i ++;
+	drawSLine(160, 490, 160, 10);
+	straitLine_i ++;
+	setTimeout(removeLines, 3000);*/
+	var img = [
+		'groundFloor.jpg',
+		'lowerFloor.jpg',
+		'firstFloor.jpg',
+		'secondFloor.jpg'
+	];
+	var menu = [
+		[
+			[0,'Loading Bay'],
+			[38,'Main Entrance'],
+			[4,'LIFT'],
+			[68,'Disabled Lift'],
+			[5,'Stairs(Besides Loading Bay)'],
+			[39,'Stairs(Besides Main Entrance)'],
+			[31,'Male Toilet(Besides G105 IT Services)'],
+			[64,'Male Toilet(Besides G23 Computr Cluster)'],
+			[24,'Female Toilet'],
+			[28,'Disabled Toilet'],
+			[8,'IT Services Right(Besides Loading Bay)'],
+			[9,'IT Services Left(Besides Loading Bay)'],
+			[36,'IT Services(Besides Main Entrance)'],
+			[12,'G105 IT Services'],
+			[32,'IT Services Helpdesk'],
+			[41,'G6'],
+			[43,'G7'],
+			[45,'G10'],
+			[47,'G11'],
+			[49,'G12'],
+			[51,'G13'],
+			[54,'G14'],
+			[55,'G16'],
+			[56,'G18'],
+			[58,'G20'],
+			[60,'G21'],
+			[66,'G23 Computer Cluster'],
+			[18,'G33 Research Lab'],
+			[62,'G33a'],
+			[20,'G35'],
+			[69,'G36'],
+			[22,'G37'],
+			[15,'G41 Collaborative Space']
+		],
+		[],
+		[],
+		[]
+	];
 
+	var points = [
+		[
+			[1080,285],//0
+			[1080,500],//1
+			[1150,500],//2
+			[1150,460],//3
+			[1150,400],//4
+			[1260,460],//5
+			[1325,500],//6
+			[1325,870],//7
+			[1395,870],//8
+			[1270,870],//9
+			[1325,1300],//10
+			[1500,1300],//11
+			[1500,1220],//12
+			[1620,1300],//13
+			[1620,1000],//14
+			[1850,1000],//15
+			[1850,1165],//16
+			[2150,1165],//17
+			[2150,1300],//18
+			[1795,1300],//19
+			[1795,1360],//20
+			[1715,1300],//21
+			[1715,1360],//22
+			[1620,1400],//23
+			[1565,1400],//24
+			[1620,1530],//25
+			[1385,1530],//26
+			[1385,1450],//27
+			[1435,1450],//28
+			[1325,1450],//29
+			[1325,1335],//30
+			[1460,1335],//31
+			[1325,1530],//32
+			[1325,1810],//33
+			[1385,1810],//34
+			[1385,1865],//35
+			[1300,1865],//36
+			[1450,1865],//37
+			[1450,2030],//38
+			[1450,1820],//39
+			[1535,1865],//40
+			[1535,1930],//41
+			[1610,1865],//42
+			[1610,1930],//43
+			[1675,1865],//44
+			[1675,1930],//45
+			[1750,1865],//46
+			[1750,1930],//47
+			[1905,1865],//48
+			[1905,1930],//49
+			[1955,1865],//50
+			[1955,1930],//51
+			[2150,1865],//52
+			[2150,1905],//53
+			[2070,1905],//54
+			[2220,1905],//55
+			[2220,1865],//56
+			[2150,1725],//57
+			[2220,1725],//58
+			[2150,1680],//59
+			[2220,1680],//60
+			[2150,1435],//61
+			[2090,1435],//62
+			[2105,1725],//63
+			[2105,1670],//64
+			[1840,1725],//65
+			[1840,1530],//66
+			[1565,1530],//67
+			[1565,1800],//68
+			[1715,1230]//69
+		],
+		[],
+		[],
+		[]
+	];
+
+	var graph = [
+		[
+			[1],//0
+			[0,2],//1
+			[1,3,6],//2
+			[4,5,2],//3
+			[3],//4
+			[3],//5
+			[2,7],//6
+			[8,9,10],//7
+			[7],//8
+			[7],//9
+			[7,11,30],//10
+			[10,12,13],//11
+			[11],//12
+			[11,14,21,23],//13
+			[13,15],//14
+			[14,16],//15
+			[15,17],//16
+			[16,18],//17
+			[17,19,61],//18
+			[18,20,21],//19
+			[19],//20
+			[69,22,13,19],//21
+			[21],//22
+			[24,13,15],//23
+			[23],//24
+			[23,66,67],//25
+			[67,27,34],//26
+			[28,29,26],//27
+			[27],//28
+			[27,30,32],//29
+			[31,10,29],//30
+			[30],//31
+			[29,33],//32
+			[32,34],//33
+			[26,35],//34
+			[36,37,34],//35
+			[35],//36
+			[38,39,35,40],//37
+			[37],//38
+			[37],//39
+			[41,37,42],//40
+			[40],//41
+			[43,40,44],//42
+			[42],//43
+			[45,42,46],//44
+			[44],//45
+			[47,44,48],//46
+			[46],//47
+			[49,46,50],//48
+			[48],//49
+			[51,48,52],//50
+			[50],//51
+			[56,53,50,57],//52
+			[54,55,52],//53
+			[53],//54
+			[53],//55
+			[52],//56
+			[58,52,59,63],//57
+			[57],//58
+			[60,57,61],//59
+			[59],//60
+			[62,18,59],//61
+			[61],//62
+			[64,57,65],//63
+			[63],//64
+			[63,66],//65
+			[25,65],//66
+			[68,25,26],//67
+			[67],//68
+			[21]//69
+		],
+		[],
+		[],
+		[]
+	];
+
+	/* Function to return the DOM object's in crossbrowser style */
+	function heightCrossBrowser(element) {
+	    /* element - DOM element */
+
+	    /* For FireFox & IE */
+	    if(     element.height != undefined && element.height != '' && element.height != 0){
+	        this.height  =   element.height;
+	    }
+	    /* For FireFox & IE */
+	    else if(element.clientHeight != undefined && element.clientHeight != '' && element.clientHeight != 0){
+	        this.height  =   element.clientHeight;
+	    }
+	    /* For Chrome * FireFox */
+	    else if(element.naturalHeight != undefined && element.naturalHeight != '' && element.naturalHeight != 0){
+	        this.height  =   element.naturalHeight;
+	    }
+	    /* For FireFox & IE */
+	    else if(element.offsetHeight != undefined && element.offsetHeight != '' && element.offsetHeight != 0){
+	        this.height  =   element.offsetHeight;
+	    }       
+	        /*
+	            console.info(' widthWidth height:',      element.height);
+	            console.info(' clntWidth clientHeight:', element.clientHeight);
+	            console.info(' natWidth naturalHeight:', element.naturalHeight);
+	            console.info(' offstWidth offsetHeight:',element.offsetHeight);       
+	            console.info(' parseInt(this.height):',parseInt(this.height));
+	        */
+	    return parseInt(this.height);
+
+	}   
+
+
+	function changeFloor() {
+		if(document.getElementById('srm')){
+			document.getElementById('header').removeChild(document.getElementById('srml'));
+			document.getElementById('header').removeChild(document.getElementById('srm'));
+			document.getElementById('header').removeChild(document.getElementsByTagName('br')[0]);
+			document.getElementById('header').removeChild(document.getElementsByTagName('br')[0]);
+		}
+		if(document.getElementById('erm')){
+			document.getElementById('header').removeChild(document.getElementById('erml'));
+			document.getElementById('header').removeChild(document.getElementById('erm'));
+		}
+		var iml = document.getElementById('imgLoader');
+		iml.src = '';
+		if(document.getElementById('flr').value != ''){
+			var floorNum = parseInt(document.getElementById('flr').value);
+			iml.src = img[floorNum];
+			iml.onload = function () {
+				var elementWidth = heightCrossBrowser(iml);
+				pathScale = elementWidth / imgScale;
+				iml.style.height = imgScale+'px';
+			}
+			var srml = document.createElement('label');
+			srml.innerHTML = 'Select Start Position: ';
+			srml.for = 'srm';
+			srml.id = 'srml';
+			document.getElementById('header').appendChild(srml);
+			var srm = document.createElement('select');
+			srm.id = 'srm';
+			srm.addEventListener('change', showPath);
+			var foptn = document.createElement('option');
+			foptn.value = '';
+			foptn.innerHTML = 'Select Start Position';
+			srm.appendChild(foptn);
+			document.getElementById('header').appendChild(srm);
+			document.getElementById('header').appendChild(document.createElement('br'));
+			document.getElementById('header').appendChild(document.createElement('br'));
+			var erml = document.createElement('label');
+			erml.innerHTML = 'Select Ending Position: ';
+			erml.for = 'erm';
+			erml.id = 'erml';
+			document.getElementById('header').appendChild(erml);
+			var erm = document.createElement('select');
+			erm.id = 'erm';
+			erm.addEventListener('change', showPath);
+			foptn = document.createElement('option');
+			foptn.value = '';
+			foptn.innerHTML = 'Select Ending Position';
+			erm.appendChild(foptn);
+			document.getElementById('header').appendChild(erm);
+			for (var i = 0, len = menu[floorNum].length; i < len; i++) {
+				var optn = document.createElement('option');
+				optn.innerHTML = menu[floorNum][i][1];
+				optn.value = menu[floorNum][i][0];
+				srm.appendChild(optn);
+				optn = document.createElement('option');
+				optn.innerHTML = menu[floorNum][i][1];
+				optn.value = menu[floorNum][i][0];
+				erm.appendChild(optn);
+			}
+		}
 	}
+
+	function showPath() {
+		removeLines();
+		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
+			var srmv = parseInt(document.getElementById('srm').value),
+				ermv = parseInt(document.getElementById('erm').value),
+				flrn = parseInt(document.getElementById('flr').value);
+			drawSLine(points[flrn][srmv][0],points[flrn][srmv][1],points[flrn][srmv][0],points[flrn][srmv][1]+5);
+			straitLine_i ++;
+			drawSLine(points[flrn][ermv][0],points[flrn][ermv][1],points[flrn][ermv][0],points[flrn][ermv][1]+5);
+			straitLine_i ++;
+		}
+	}
+	/*
 	// mouse down handler
 	function onMouseDown(evt) {
 	  var mousex = event.clientX;//(event.clientX / window.innerWidth) * 2 - 1;
@@ -167,7 +499,7 @@
 	  //alert("X: "+mousex+"; Y: "+mousey);
 	  //console.log("Mouse Clicked:: X: "+mousex+"; Y: "+mousey);
 	  document.getElementById('display').innerHTML = "Mouse Clicked:: X: "+mousex+"; Y: "+mousey;
-	}
+	}*/
 
 </script>
 
