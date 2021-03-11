@@ -578,6 +578,14 @@
 				}
 			}
 		}
+		else{
+			var array0 = new Array(graph[floorNum].length);
+			array0.fill(true);
+			drawIsRunning = new Array(graph[floorNum].length);
+			drawIsRunning.fill(array0);
+			drawIsRunning[srmv][ermv] = false;
+			removeLines();
+		}
 	}
 	/*
 	// mouse down handler
