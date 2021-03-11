@@ -13,16 +13,6 @@
 			background-color: white;
 			padding: 20px;
 		}
-		#flr {
-			//width: 100%;
-		}
-		#srm {
-			//margin-left: 1%;
-			//width: 49%;
-		}
-		#erm {
-			//width: 49%;
-		}
 		#bdy {
 			left: 500px;
 			position: absolute;
@@ -61,11 +51,6 @@
 			top: 395px;
 			left: 391px;
 		}
-		#display {
-			float: right;
-			display: none;
-			//background-color: white;
-		}
 
 	</style>
 </head>
@@ -85,6 +70,37 @@
 </div>
 <script type="text/javascript">
 	//document.getElementById("srm").addEventListener("change",startRoom,false);
+
+	/* Function to return the DOM object's in crossbrowser style */
+	function heightCrossBrowser(element) {
+	    /* element - DOM element */
+
+	    /* For FireFox & IE */
+	    if(     element.height != undefined && element.height != '' && element.height != 0){
+	        this.height  =   element.height;
+	    }
+	    /* For FireFox & IE */
+	    else if(element.clientHeight != undefined && element.clientHeight != '' && element.clientHeight != 0){
+	        this.height  =   element.clientHeight;
+	    }
+	    /* For Chrome * FireFox */
+	    else if(element.naturalHeight != undefined && element.naturalHeight != '' && element.naturalHeight != 0){
+	        this.height  =   element.naturalHeight;
+	    }
+	    /* For FireFox & IE */
+	    else if(element.offsetHeight != undefined && element.offsetHeight != '' && element.offsetHeight != 0){
+	        this.height  =   element.offsetHeight;
+	    }       
+	        /*
+	            console.info(' widthWidth height:',      element.height);
+	            console.info(' clntWidth clientHeight:', element.clientHeight);
+	            console.info(' natWidth naturalHeight:', element.naturalHeight);
+	            console.info(' offstWidth offsetHeight:',element.offsetHeight);       
+	            console.info(' parseInt(this.height):',parseInt(this.height));
+	        */
+	    return parseInt(this.height);
+
+	}   
 	function sleepFor( sleepDuration ){
 		var now = new Date().getTime();
 		while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
@@ -93,7 +109,7 @@
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	console.log('working');
-	var straitLine_i = 0, drawIsRunning = false, imgScale = 600, pathScale = 1;
+	var straitLine_i = 0, drawIsRunning = false, imgScale = 600, pathScale = 1, floorNum, arrayFl, arrayGr;//, shortpath = 999999;
 	async function drawSLine(fromX, fromY, toX, toY) {
 		fromX = fromX / pathScale;
 		fromY = fromY / pathScale;
@@ -160,6 +176,7 @@
 			}
 		}
 		else{
+			console.log(fromX+','+fromY+' | '+toX+','+toY);
 			alert('Sorry! Unable to draw Strait Line');
 		}
 		//animate(info.id, toX, toY);
@@ -171,6 +188,19 @@
 		while(straitLine_i){
 			straitLine_i--;
 			linepar.removeChild(document.getElementById('straitLine'+straitLine_i));
+		}
+	}
+
+	function pathDist(srmv, ermv) {
+		if(points[floorNum][srmv][0] == points[floorNum][ermv][0]){
+			return Math.abs(points[floorNum][srmv][1]-points[floorNum][ermv][1]);
+		}
+		else if(points[floorNum][srmv][1] == points[floorNum][ermv][1]){
+			return Math.abs(points[floorNum][srmv][0]-points[floorNum][ermv][0]);
+		}
+		else{
+			alert('There is a problem with graph. Nodes are not connected!');
+			return -1;
 		}
 	}
 	/*drawSLine(160, 10, 590, 10);
@@ -316,7 +346,7 @@
 			[3],//4
 			[3],//5
 			[2,7],//6
-			[8,9,10],//7
+			[6,8,9,10],//7
 			[7],//8
 			[7],//9
 			[7,11,30],//10
@@ -332,7 +362,7 @@
 			[19],//20
 			[69,22,13,19],//21
 			[21],//22
-			[24,13,15],//23
+			[24,13,25],//23
 			[23],//24
 			[23,66,67],//25
 			[67,27,34],//26
@@ -343,7 +373,7 @@
 			[30],//31
 			[29,33],//32
 			[32,34],//33
-			[26,35],//34
+			[26,35,33],//34
 			[36,37,34],//35
 			[35],//36
 			[38,39,35,40],//37
@@ -385,38 +415,6 @@
 		[]
 	];
 
-	/* Function to return the DOM object's in crossbrowser style */
-	function heightCrossBrowser(element) {
-	    /* element - DOM element */
-
-	    /* For FireFox & IE */
-	    if(     element.height != undefined && element.height != '' && element.height != 0){
-	        this.height  =   element.height;
-	    }
-	    /* For FireFox & IE */
-	    else if(element.clientHeight != undefined && element.clientHeight != '' && element.clientHeight != 0){
-	        this.height  =   element.clientHeight;
-	    }
-	    /* For Chrome * FireFox */
-	    else if(element.naturalHeight != undefined && element.naturalHeight != '' && element.naturalHeight != 0){
-	        this.height  =   element.naturalHeight;
-	    }
-	    /* For FireFox & IE */
-	    else if(element.offsetHeight != undefined && element.offsetHeight != '' && element.offsetHeight != 0){
-	        this.height  =   element.offsetHeight;
-	    }       
-	        /*
-	            console.info(' widthWidth height:',      element.height);
-	            console.info(' clntWidth clientHeight:', element.clientHeight);
-	            console.info(' natWidth naturalHeight:', element.naturalHeight);
-	            console.info(' offstWidth offsetHeight:',element.offsetHeight);       
-	            console.info(' parseInt(this.height):',parseInt(this.height));
-	        */
-	    return parseInt(this.height);
-
-	}   
-
-
 	function changeFloor() {
 		if(document.getElementById('srm')){
 			document.getElementById('header').removeChild(document.getElementById('srml'));
@@ -431,13 +429,14 @@
 		var iml = document.getElementById('imgLoader');
 		iml.src = '';
 		if(document.getElementById('flr').value != ''){
-			var floorNum = parseInt(document.getElementById('flr').value);
+			floorNum = parseInt(document.getElementById('flr').value);
 			iml.src = img[floorNum];
 			iml.onload = function () {
 				var elementWidth = heightCrossBrowser(iml);
 				pathScale = elementWidth / imgScale;
 				iml.style.height = imgScale+'px';
 			}
+
 			var srml = document.createElement('label');
 			srml.innerHTML = 'Select Start Position: ';
 			srml.for = 'srm';
@@ -477,18 +476,86 @@
 				erm.appendChild(optn);
 			}
 		}
+		else{
+			floorNum = '';
+		}
+	}
+
+	function dijkstra(srmv, ermv) {
+		var path = new Array(graph[floorNum].length),
+			vist = new Array(graph[floorNum].length),
+			nods = new Array(graph[floorNum].length);
+		path.fill(-1);
+		vist.fill(false);
+		nods.fill(0);
+		path[srmv] = -2;
+		var fl = true;
+		var nodeSteps = 0;
+		while(fl){
+			nodeSteps ++;
+			fl = false;
+			for (var i = 0; i < path.length; i++) {
+				if(path[i] != -1 && !vist[i] && nods[i] < nodeSteps){
+					vist[i] = true;
+					for (var j = 0; j < graph[floorNum][i].length; j++) {
+						//console.log(i+':'+graph[floorNum][i][j]+':'+path[graph[floorNum][i][j]]);
+						if(path[graph[floorNum][i][j]] == -1){
+							path[graph[floorNum][i][j]] = i;
+							nods[graph[floorNum][i][j]] = nodeSteps;
+						}
+					}
+				}
+				if(!vist[i]){
+					fl = true;
+				}
+			}
+		}
+		var res = new Array(), resi = ermv;
+		while(path[resi] != -2){
+			res.unshift(resi);
+			resi = path[resi];
+		}
+		return res;
 	}
 
 	function showPath() {
 		removeLines();
 		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
 			var srmv = parseInt(document.getElementById('srm').value),
-				ermv = parseInt(document.getElementById('erm').value),
-				flrn = parseInt(document.getElementById('flr').value);
-			drawSLine(points[flrn][srmv][0],points[flrn][srmv][1],points[flrn][srmv][0],points[flrn][srmv][1]+5);
+				ermv = parseInt(document.getElementById('erm').value);
+			//console.log(dijkstra(srmv,ermv));
+			drawSLine(points[floorNum][srmv][0],points[floorNum][srmv][1],
+				points[floorNum][srmv][0],points[floorNum][srmv][1]+5);
 			straitLine_i ++;
-			drawSLine(points[flrn][ermv][0],points[flrn][ermv][1],points[flrn][ermv][0],points[flrn][ermv][1]+5);
+			drawSLine(points[floorNum][ermv][0],points[floorNum][ermv][1],
+				points[floorNum][ermv][0],points[floorNum][ermv][1]+5);
 			straitLine_i ++;
+			/*var array0 = new Array(graph[floorNum].length+1);
+			array0.fill(false);
+			arrayFl = new Array(graph[floorNum].length+1);
+			arrayFl.fill(array0);
+			arrayGr = new Array(graph[floorNum].length+1);
+			arrayGr.fill('');
+			//shortpath = 999999;
+			var res = getPath(srmv, ermv);*/
+			var res = dijkstra(srmv,ermv);
+			if(res == []){
+				console.log('failed');
+			}
+			else{
+				console.log('successfull');
+				res.unshift(srmv);
+				console.log(res);
+				//res[2] = shortify(res[2]);
+				//console.log(res[2]);
+			//console.log('----------------------'+arrayGr[29]);
+				removeLines();
+				for (var i = 1, len = res.length; i < len; i++) {
+					drawSLine(points[floorNum][res[i]][0], points[floorNum][res[i]][1],
+						points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1]);
+					straitLine_i ++;
+				}
+			}
 		}
 	}
 	/*
