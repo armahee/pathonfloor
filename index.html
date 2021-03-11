@@ -100,22 +100,17 @@
 	        */
 	    return parseInt(this.height);
 
-	}   
-	function sleepFor( sleepDuration ){
-		var now = new Date().getTime();
-		while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
 	}
 	function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	console.log('working');
-	var straitLine_i = 0, drawIsRunning = false, imgScale = 600, pathScale = 1, floorNum, arrayFl, arrayGr;//, shortpath = 999999;
+	var straitLine_i = 0, drawIsRunning, imgScale = 600, pathScale = 1, floorNum, arrayFl, arrayGr;//, shortpath = 999999;
 	async function drawSLine(fromX, fromY, toX, toY) {
 		fromX = fromX / pathScale;
 		fromY = fromY / pathScale;
 		toX = toX / pathScale;
 		toY = toY / pathScale;
-		drawIsRunning = true;
 		var info = document.createElement('div');
 		info.style.position = 'absolute';
 		info.style.borderRadius = '5px';
@@ -130,7 +125,6 @@
 				info.style.width = '5px';
 				info.style.height = '0px';
 				for (var i = 1; i <= toY - (fromY - 1); i++) {
-					drawIsRunning = true;
 					info.style.height = i.toString()+"px";
 					await sleep(5);
 				}
@@ -139,7 +133,6 @@
 				info.style.width = '5px';
 				info.style.height = '0px';
 				for (var i = 1; i <= fromY - toY; i++) {
-					drawIsRunning = true;
 					info.style.top = (parseInt(info.style.top, 10) - 1)+'px';
 					info.style.height = i.toString()+'px';
 					await sleep(5);
@@ -155,7 +148,6 @@
 				info.style.width = '0px';
 				info.style.height = '5px';
 				for (var i = 1; i <= toX - (fromX - 1); i++) {
-					drawIsRunning = true;
 					info.style.width = i.toString()+'px';
 					await sleep(5);
 				}
@@ -164,7 +156,6 @@
 				info.style.width = '0px';
 				info.style.height = '5px';
 				for (var i = 1; i <= fromX - (toX - 1); i++) {
-					drawIsRunning = true;
 					info.style.left = (parseInt(info.style.left, 10) - 1)+'px';
 					info.style.width = i.toString()+'px';
 					await sleep(5);
@@ -180,7 +171,6 @@
 			alert('Sorry! Unable to draw Strait Line');
 		}
 		//animate(info.id, toX, toY);
-		drawIsRunning = false;
 	}
 
 	function removeLines() {
@@ -432,10 +422,15 @@
 			floorNum = parseInt(document.getElementById('flr').value);
 			iml.src = img[floorNum];
 			iml.onload = function () {
-				var elementWidth = heightCrossBrowser(iml);
-				pathScale = elementWidth / imgScale;
+				var elementHeight = heightCrossBrowser(iml);
+				pathScale = elementHeight / imgScale;// imgScale = 600
 				iml.style.height = imgScale+'px';
 			}
+
+			var array0 = new Array(graph[floorNum].length);
+			array0.fill(true);
+			drawIsRunning = new Array(graph[floorNum].length);
+			drawIsRunning.fill(array0);
 
 			var srml = document.createElement('label');
 			srml.innerHTML = 'Select Start Position: ';
@@ -485,6 +480,29 @@
 		var path = new Array(graph[floorNum].length),
 			vist = new Array(graph[floorNum].length),
 			nods = new Array(graph[floorNum].length);
+		/*
+		2 -> 8
+		path[0] = 1;//3
+		path[1] = 2;//2
+		path[2] = -2;//1
+		path[3] = 2;//2
+		path[4] = 3;//3
+		path[5] = 3;//3
+		path[6] = 2;//2
+		path[7] = 6;//3
+		path[8] = 7;//4
+		path[9] = 7;//4
+		path[10] = 7;//4
+
+
+2 -> 6 -> 7 -> 8
+
+		res[0] = 2;
+		res[1] = 6;
+		res[2] = 7;
+		res[3] = 8;
+*/
+		
 		path.fill(-1);
 		vist.fill(false);
 		nods.fill(0);
@@ -518,7 +536,7 @@
 		return res;
 	}
 
-	function showPath() {
+	async function showPath() {
 		removeLines();
 		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
 			var srmv = parseInt(document.getElementById('srm').value),
@@ -530,14 +548,6 @@
 			drawSLine(points[floorNum][ermv][0],points[floorNum][ermv][1],
 				points[floorNum][ermv][0],points[floorNum][ermv][1]+5);
 			straitLine_i ++;
-			/*var array0 = new Array(graph[floorNum].length+1);
-			array0.fill(false);
-			arrayFl = new Array(graph[floorNum].length+1);
-			arrayFl.fill(array0);
-			arrayGr = new Array(graph[floorNum].length+1);
-			arrayGr.fill('');
-			//shortpath = 999999;
-			var res = getPath(srmv, ermv);*/
 			var res = dijkstra(srmv,ermv);
 			if(res == []){
 				console.log('failed');
@@ -548,14 +558,23 @@
 				console.log(res);
 				//res[2] = shortify(res[2]);
 				//console.log(res[2]);
-			//console.log('----------------------'+arrayGr[29]);
+				//console.log('----------------------'+arrayGr[29]);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
+				drawIsRunning[srmv][ermv] = false;
 				removeLines();
 				for (var i = 1, len = res.length; i < len; i++) {
+					if(drawIsRunning[srmv][ermv]){
+						break;
+					}
 					drawSLine(
 						points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1],
 						points[floorNum][res[i]][0], points[floorNum][res[i]][1]
 						);
 					straitLine_i ++;
+					await sleep(pathDist(res[i], res[i-1])*2);
 				}
 			}
 		}
