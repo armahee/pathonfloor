@@ -551,8 +551,10 @@
 			//console.log('----------------------'+arrayGr[29]);
 				removeLines();
 				for (var i = 1, len = res.length; i < len; i++) {
-					drawSLine(points[floorNum][res[i]][0], points[floorNum][res[i]][1],
-						points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1]);
+					drawSLine(
+						points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1],
+						points[floorNum][res[i]][0], points[floorNum][res[i]][1]
+						);
 					straitLine_i ++;
 				}
 			}
