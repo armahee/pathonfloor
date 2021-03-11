@@ -85,8 +85,8 @@
 		for (var i = 0; i < points.length; i++) {
 			var info = document.createElement('div');
 			info.style.position = 'absolute';
-			info.style.left = points[i][0]+'px';
-			info.style.top = points[i][1]+'px';
+			info.style.left = (points[i][0]-25)+'px';
+			info.style.top = (points[i][1]-25)+'px';
 			info.style.color = 'red';
 			info.style.zIndex = '1';
 			info.style.fontSize = '50px';
