@@ -64,6 +64,7 @@
 		<option value="2">First Floor</option>
 		<option value="3">Second Floor</option>
 	</select><br><br>
+	<div id='display'></div>
 </div>
 <div id='bdy'>
 	<img id="imgLoader" src="">
@@ -124,15 +125,16 @@
 			if(toY > fromY){
 				info.style.width = '5px';
 				info.style.height = '0px';
-				for (var i = 1; i <= toY - (fromY - 1); i++) {
+				for (var i = 1; i <= toY - (fromY - 5); i++) {
 					info.style.height = i.toString()+"px";
 					await sleep(5);
 				}
 			}
 			else if(toY < fromY){
+				info.style.top = (fromY+5)+'px';
 				info.style.width = '5px';
 				info.style.height = '0px';
-				for (var i = 1; i <= fromY - toY; i++) {
+				for (var i = 1; i <= (fromY - toY)+5; i++) {
 					info.style.top = (parseInt(info.style.top, 10) - 1)+'px';
 					info.style.height = i.toString()+'px';
 					await sleep(5);
@@ -147,15 +149,16 @@
 			if(toX > fromX){
 				info.style.width = '0px';
 				info.style.height = '5px';
-				for (var i = 1; i <= toX - (fromX - 1); i++) {
+				for (var i = 1; i <= toX - (fromX - 5); i++) {
 					info.style.width = i.toString()+'px';
 					await sleep(5);
 				}
 			}
 			else if(toX < fromX){
+				info.style.left = (fromX+5)+'px';
 				info.style.width = '0px';
 				info.style.height = '5px';
-				for (var i = 1; i <= fromX - (toX - 1); i++) {
+				for (var i = 1; i <= (fromX - toX)+4; i++) {
 					info.style.left = (parseInt(info.style.left, 10) - 1)+'px';
 					info.style.width = i.toString()+'px';
 					await sleep(5);
@@ -874,6 +877,23 @@
 		],
 		[]
 	];
+/*
+	var graph = new Array(4);
+	for (var i = 0; i < points.length; i++) {
+		graph[i] = new Array(points[i].length);
+		for (var j = 0; j < points[i].length; j++) {
+			for (var k = 0; k < points[i].length; k++) {
+				if(points[i][j][0] == points[i][k][0] || points[i][j][1] == points[i][k][1]){
+					if(graph[i][j] == undefined){
+						graph[i][j] = new Array();
+					}
+					graph[i][j].push(k);
+				}
+			}
+		}
+	}*/
+	//console.log(ggraph);
+	//document.getElementById('display').innerHTML = ggraph;
 
 	function changeFloor() {
 		removeLines();
