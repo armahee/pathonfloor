@@ -343,8 +343,8 @@
 			[1325,1300],//10
 			[1500,1300],//11
 			[1500,1220],//12
-			[1620,1300],//13
-			[1620,1000],//14
+			[1610,1300],//13
+			[1610,1000],//14
 			[1850,1000],//15
 			[1850,1165],//16
 			[2150,1165],//17
@@ -353,9 +353,9 @@
 			[1795,1360],//20
 			[1715,1300],//21
 			[1715,1360],//22
-			[1620,1400],//23
+			[1610,1400],//23
 			[1565,1400],//24
-			[1620,1530],//25
+			[1610,1530],//25
 			[1385,1530],//26
 			[1385,1450],//27
 			[1435,1450],//28
@@ -630,7 +630,7 @@
 			[21],//22
 			[24,13,25],//23
 			[23],//24
-			[23,66,67],//25
+			[23,42,66,67],//25
 			[67,27,34],//26
 			[28,29,26],//27
 			[27],//28
@@ -647,7 +647,7 @@
 			[37],//39
 			[41,37,42],//40
 			[40],//41
-			[43,40,44],//42
+			[25,43,40,44],//42
 			[42],//43
 			[45,42,46],//44
 			[44],//45
@@ -986,19 +986,28 @@
 		while(fl){
 			nodeSteps ++;
 			fl = false;
+			var resu = new Array();
 			for (var i = 0; i < path.length; i++) {
 				if(path[i] != -1 && !vist[i] && nods[i] < nodeSteps){
 					vist[i] = true;
 					for (var j = 0; j < graph[floorNum][i].length; j++) {
 						//console.log(i+':'+graph[floorNum][i][j]+':'+path[graph[floorNum][i][j]]);
 						if(path[graph[floorNum][i][j]] == -1){
-							path[graph[floorNum][i][j]] = i;
-							nods[graph[floorNum][i][j]] = nodeSteps;
+							resu.push([pathDist(graph[floorNum][i][j],i),graph[floorNum][i][j],i]);
+							//path[graph[floorNum][i][j]] = i;
+							//nods[graph[floorNum][i][j]] = nodeSteps;
 						}
 					}
 				}
 				if(!vist[i]){
 					fl = true;
+				}
+			}
+			resu.sort(function(a, b){return a[0] - b[0]});
+			for (var i = 0; i < resu.length; i++) {
+				if(path[resu[i][1]] == -1){
+					path[resu[i][1]] = resu[i][2];
+					nods[resu[i][1]] = nodeSteps;
 				}
 			}
 		}
