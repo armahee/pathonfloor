@@ -7,7 +7,7 @@
 			background-color: #000;
 			margin: 0px;
 		}
-		#header {
+		#hdholder {
 			position: absolute;
 			width: 400px;
 			background-color: white;
@@ -25,34 +25,37 @@
 	</style>
 </head>
 <body>
-<div id='header'>
+<div id="hdholder">
 	<pre id='display'></pre>
-	<label for="flr">Choose a floor:</label>
-	<select id='flr' onchange="changeFloor(0)">
-		<option selected="" value="">Select a floor</option>
-		<option value="0">Ground Floor</option>
-		<option value="1">Lower First Floor</option>
-		<option value="2">First Floor</option>
-		<option value="3">Second Floor</option>
-	</select><br>
-	<label for="srm" id="srml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
-	<select id="srm" onchange="showPath(0)">
-		<option value="">Choose a Floor First</option>
-	</select><br><br>
-	<label for="eflr">Choose a floor for end position:</label>
-	<select id='eflr' onchange="changeFloor(1)">
-		<option selected="" value="">Select a floor</option>
-		<option value="0">Ground Floor</option>
-		<option value="1">Lower First Floor</option>
-		<option value="2">First Floor</option>
-		<option value="3">Second Floor</option>
-	</select><br>
-	<label for="erm" id="erml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
-	<select id="erm" onchange="showPath(1)">
-		<option 	value="">Choose a Floor First</option>
-	</select><br><br>
-	<button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button>
+	<div id='header'>
+		<label for="flr">Choose a floor:</label>
+		<select id='flr' onchange="changeFloor(0)">
+			<option selected="" value="">Select a floor</option>
+			<option value="0">Ground Floor</option>
+			<option value="1">Lower First Floor</option>
+			<option value="2">First Floor</option>
+			<option value="3">Second Floor</option>
+		</select><br>
+		<label for="srm" id="srml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
+		<select id="srm" onchange="showPath(0)">
+			<option value="">Choose a Floor First</option>
+		</select><br><br>
+		<label for="eflr">Choose a floor for end position:</label>
+		<select id='eflr' onchange="changeFloor(1)">
+			<option selected="" value="">Select a floor</option>
+			<option value="0">Ground Floor</option>
+			<option value="1">Lower First Floor</option>
+			<option value="2">First Floor</option>
+			<option value="3">Second Floor</option>
+		</select><br>
+		<label for="erm" id="erml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
+		<select id="erm" onchange="showPath(1)">
+			<option 	value="">Choose a Floor First</option>
+		</select><br><br>
+		<button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button>
+	</div>
 </div>
+
 <div id='bdy'>
 	<img id="imgLoader" src="">
 </div>
@@ -1550,10 +1553,14 @@
 		}
 		removeLines();
 		document.getElementById('nxbtn').style.display = 'none';
+		if(document.getElementById('flr').value == '' && document.getElementById('eflr').value == ''){
+			document.getElementById('imgLoader').src = '';
+		}
 		if(!selectNum){
-			var iml = document.getElementById('imgLoader');
-			iml.src = '';
 			if(document.getElementById('flr').value != ''){
+				document.getElementById('header').style.display = 'none';
+				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
+				var iml = document.getElementById('imgLoader');
 				floorNum = parseInt(document.getElementById('flr').value);
 				document.getElementById('bdy').removeChild(iml);
 				iml = document.createElement('img');
@@ -1588,6 +1595,8 @@
 					optn.value = menu[floorNum][i][0];
 					srm.appendChild(optn);
 				}
+				document.getElementById('header').style.display = 'block';
+				document.getElementById('display').innerHTML = '';
 			}
 			else{
 				while(document.getElementById('srm').childNodes.length){
@@ -1602,6 +1611,8 @@
 		}
 		else if(selectNum == 1){
 			if(document.getElementById('eflr').value != ''){
+				document.getElementById('header').style.display = 'none';
+				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				var iml = document.getElementById('imgLoader');
 				iml.src = '';
 				document.getElementById('bdy').removeChild(iml);
@@ -1633,6 +1644,8 @@
 					optn.value = menu[efloorNum][i][0];
 					erm.appendChild(optn);
 				}
+				document.getElementById('header').style.display = 'block';
+				document.getElementById('display').innerHTML = '';
 			}
 			else{
 				while(document.getElementById('erm').childNodes.length){
@@ -1653,6 +1666,8 @@
 			nxbtn.style.background = 'green';
 			//console.log(img[sflrn]+' '+img[eflrn]+' '+iml.src);
 			if(sflrn == parseInt(iml.data)){
+				document.getElementById('header').style.display = 'none';
+				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				nxbtn.innerHTML = 'Click to view Previous Step';
 				nxbtn.style.display = 'block';
 				iml.src = '';
@@ -1674,9 +1689,14 @@
 				array0.fill(true);
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
+				document.getElementById('display').innerHTML = 'Please wait while showing path...';
 				showPath(2);
+				document.getElementById('header').style.display = 'block';
+				document.getElementById('display').innerHTML = '';
 			}
 			else{
+				document.getElementById('header').style.display = 'none';
+				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				nxbtn.innerHTML = 'Click to view Next Step';
 				nxbtn.style.display = 'block';
 				iml.src = '';
@@ -1698,7 +1718,10 @@
 				array0.fill(true);
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
+				document.getElementById('display').innerHTML = 'Please wait while showing path...';
 				showPath(3);
+				document.getElementById('header').style.display = 'block';
+				document.getElementById('display').innerHTML = '';
 			}
 		}
 	}
@@ -1805,6 +1828,8 @@
 		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
 			var iml = document.getElementById('imgLoader');
 			if(document.getElementById('flr').value != iml.data){
+				document.getElementById('header').style.display = 'none';
+				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				iml.src = '';
 				floorNum = parseInt(document.getElementById('flr').value);
 				document.getElementById('bdy').removeChild(iml);
@@ -1824,6 +1849,8 @@
 				array0.fill(true);
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
+				document.getElementById('header').style.display = 'block';
+				document.getElementById('display').innerHTML = '';
 			}
 			if(document.getElementById('flr').value == document.getElementById('eflr').value){
 				floorNum = parseInt(document.getElementById('flr').value);
