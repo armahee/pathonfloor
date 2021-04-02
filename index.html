@@ -1821,7 +1821,12 @@
 				straitLine_i ++;
 				await sleep(pathDist(res[i], res[i-1])*2);
 			}
-
+			if(res.length == 1){
+				drawSLine(
+					points[floorNum][res[0]][0], points[floorNum][res[0]][1],
+					points[floorNum][res[0]][0], points[floorNum][res[0]][1]);
+				straitLine_i ++;
+			}
 			document.getElementById('nxbtn').style.display = 'block';
 			return;
 		}
@@ -1890,6 +1895,12 @@
 					straitLine_i ++;
 					await sleep(pathDist(res[i], res[i-1])*2);
 				}
+				if(res.length == 1){
+					drawSLine(
+						points[floorNum][res[0]][0], points[floorNum][res[0]][1],
+						points[floorNum][res[0]][0], points[floorNum][res[0]][1]);
+					straitLine_i ++;
+				}
 			}
 			else{
 				var srmv = parseInt(document.getElementById('srm').value),
@@ -1926,6 +1937,12 @@
 						);
 					straitLine_i ++;
 					await sleep(pathDist(res[i], res[i-1])*2);
+				}
+				if(res.length == 1){
+					drawSLine(
+						points[floorNum][res[0]][0], points[floorNum][res[0]][1],
+						points[floorNum][res[0]][0], points[floorNum][res[0]][1]);
+					straitLine_i ++;
 				}
 				if(selectNum == 3){
 					document.getElementById('nxbtn').style.background = 'green';
