@@ -18,53 +18,40 @@
 			position: absolute;
 			width: 62%
 		}
-		.door {
-			position: absolute;
-			border-radius: 5px;
+		#nxbtn {
+			display: none;
 			background: red;
 		}
-		.vpath {
-			width: 0px;
-			height: 5px;
-		}
-		.hpath {
-			width: 5px;
-			height: 0px;
-		}
-		#f0rm7 {
-			top: 445px;
-			left: 245px;
-		}
-		#f0rm10 {
-			top: 445px;
-			left: 265px;
-		}
-		#f0rm18 {
-			top: 445px;
-			left: 391px;
-		}
-		#f0rm20 {
-			top: 410px;
-			left: 391px;
-		}
-		#f0rm21 {
-			top: 395px;
-			left: 391px;
-		}
-
 	</style>
 </head>
 <body>
 <div id='header'>
+	<pre id='display'></pre>
 	<label for="flr">Choose a floor:</label>
-	<select id='flr' onchange="changeFloor()">
+	<select id='flr' onchange="changeFloor(0)">
 		<option selected="" value="">Select a floor</option>
 		<option value="0">Ground Floor</option>
 		<option value="1">Lower First Floor</option>
 		<option value="2">First Floor</option>
 		<option value="3">Second Floor</option>
+	</select><br>
+	<label for="srm" id="srml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
+	<select id="srm" onchange="showPath(0)">
+		<option value="">Choose a Floor First</option>
 	</select><br><br>
-	<pre id='display'></pre>
+	<label for="eflr">Choose a floor for end position:</label>
+	<select id='eflr' onchange="changeFloor(1)">
+		<option selected="" value="">Select a floor</option>
+		<option value="0">Ground Floor</option>
+		<option value="1">Lower First Floor</option>
+		<option value="2">First Floor</option>
+		<option value="3">Second Floor</option>
+	</select><br>
+	<label for="erm" id="erml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
+	<select id="erm" onchange="showPath(1)">
+		<option 	value="">Choose a Floor First</option>
+	</select><br><br>
+	<button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button>
 </div>
 <div id='bdy'>
 	<img id="imgLoader" src="">
@@ -106,7 +93,7 @@
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	console.log('working');
-	var straitLine_i = 0, drawIsRunning, imgScale = 600, pathScale = 1, pathWeight = '5px', floorNum, arrayFl, arrayGr;//, shortpath = 999999;
+	var straitLine_i = 0, drawIsRunning, imgScale = 600, pathScale = 1, pathWeight = '5px', floorNum = '', arrayFl, arrayGr, sStairsP;//, shortpath = 999999;
 	async function drawSLine(fromX, fromY, toX, toY) {
 		fromX = fromX / pathScale;
 		fromY = fromY / pathScale;
@@ -250,7 +237,7 @@
 		],
 		[
 			[0,'LIFT'],
-			[5,'Stairs(Besides Disabled LIFT)'],
+			[5,'Stairs to Ground Floor and First Floor(Besides LIFT)'],
 			[8,'Stairs(Besides LF29)'],
 			[10,'LF29'],
 			[12,'LF28'],
@@ -281,14 +268,14 @@
 			[82,'LF6'],
 			[84,'LF5'],
 			[87,'Disabled LIFT(Besides LF7 Research Lab)'],
-			[88,'Stairs(Besides LF7 Research Lab)'],
+			[88,'Stairs to Ground Floor(Besides LF7 Research Lab)'],
 			[89,'LF8 Quiet Lab'],
 			[103,'LF7 Research Lab'],
 			[101,'Male Toilet'],
 			[98,'Female Toilet'],
 			[95,'Disabled Lift(Besides LF1 Research Lab)'],
 			[90,'LF1 Research Lab'],
-			[93,'Stairs(Besides LF1 Research Lab)']
+			[93,'Stairs to First Floor(Besides LF1 Research Lab)']
 		],
 		[
 			[1,'1.19 Mercury'],
@@ -449,6 +436,33 @@
 			[246,'2.9'],
 			[248,'2.15 MSc Teaching'],
 			[249,'2.19 MSc Teaching']
+		]
+	];
+
+	var stairs = [
+		[
+			[5,39],
+			[5,39],
+			[5,39],
+			[5,39]
+		],
+		[
+			[5,25,78,88],
+			[25,78],
+			[5,25,78,93],
+			[25,78,93]
+		],
+		[
+			[24,63],
+			[24,63,76],
+			[],
+			[65,90]
+		],
+		[
+			[59,218],
+			[59,218],
+			[59,218,31,120],
+			[59,218]
 		]
 	];
 
@@ -1527,83 +1541,169 @@
 	//console.log(ggraph);
 	document.getElementById('display').innerHTML = distr;*/
 
-	function changeFloor() {
-		removeLines();
-		if(document.getElementById('srm')){
-			document.getElementById('header').removeChild(document.getElementById('srml'));
-			document.getElementById('header').removeChild(document.getElementById('srm'));
-			document.getElementById('header').removeChild(document.getElementsByTagName('br')[1]);
-			document.getElementById('header').removeChild(document.getElementsByTagName('br')[1]);
-		}
-		if(document.getElementById('erm')){
-			document.getElementById('header').removeChild(document.getElementById('erml'));
-			document.getElementById('header').removeChild(document.getElementById('erm'));
-		}
-		var iml = document.getElementById('imgLoader');
-		iml.src = '';
-		if(document.getElementById('flr').value != ''){
-			floorNum = parseInt(document.getElementById('flr').value);
-			document.getElementById('bdy').removeChild(iml);
-			iml = document.createElement('img');
-			iml.id = 'imgLoader';
-			iml.src = img[floorNum];
-			document.getElementById('bdy').appendChild(iml);
-			iml.onload = function () {
-				var elementHeight = heightCrossBrowser(iml);
-				pathScale = elementHeight / imgScale;// imgScale = 600
-				iml.style.height = imgScale+'px';
-				console.log('Current Image Height:'+elementHeight);
-			}
-			console.log('Current Path Scale:'+pathScale);
+	function changeFloor(selectNum) {
+		if(floorNum != ''){
 			var array0 = new Array(graph[floorNum].length);
 			array0.fill(true);
 			drawIsRunning = new Array(graph[floorNum].length);
 			drawIsRunning.fill(array0);
+		}
+		removeLines();
+		document.getElementById('nxbtn').style.display = 'none';
+		if(!selectNum){
+			var iml = document.getElementById('imgLoader');
+			iml.src = '';
+			if(document.getElementById('flr').value != ''){
+				floorNum = parseInt(document.getElementById('flr').value);
+				document.getElementById('bdy').removeChild(iml);
+				iml = document.createElement('img');
+				iml.id = 'imgLoader';
+				iml.data = document.getElementById('flr').value;
+				iml.src = img[floorNum];
+				document.getElementById('bdy').appendChild(iml);
+				iml.onload = function () {
+					var elementHeight = heightCrossBrowser(iml);
+					pathScale = elementHeight / imgScale;// imgScale = 600
+					iml.style.height = imgScale+'px';
+					console.log('Current Image Height:'+elementHeight);
+				}
+				console.log('Current Path Scale:'+pathScale);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
 
-			var srml = document.createElement('label');
-			srml.innerHTML = 'Select Start Position: ';
-			srml.for = 'srm';
-			srml.id = 'srml';
-			document.getElementById('header').appendChild(srml);
-			var srm = document.createElement('select');
-			srm.id = 'srm';
-			srm.addEventListener('change', showPath);
-			var foptn = document.createElement('option');
-			foptn.value = '';
-			foptn.innerHTML = 'Select Start Position';
-			srm.appendChild(foptn);
-			document.getElementById('header').appendChild(srm);
-			document.getElementById('header').appendChild(document.createElement('br'));
-			document.getElementById('header').appendChild(document.createElement('br'));
-			var erml = document.createElement('label');
-			erml.innerHTML = 'Select Ending Position: ';
-			erml.for = 'erm';
-			erml.id = 'erml';
-			document.getElementById('header').appendChild(erml);
-			var erm = document.createElement('select');
-			erm.id = 'erm';
-			erm.addEventListener('change', showPath);
-			foptn = document.createElement('option');
-			foptn.value = '';
-			foptn.innerHTML = 'Select Ending Position';
-			erm.appendChild(foptn);
-			document.getElementById('header').appendChild(erm);
-			for (var i = 0, len = menu[floorNum].length; i < len; i++) {
-				var optn = document.createElement('option');
-				optn.innerHTML = menu[floorNum][i][1];
-				optn.value = menu[floorNum][i][0];
-				srm.appendChild(optn);
-				optn = document.createElement('option');
-				optn.innerHTML = menu[floorNum][i][1];
-				optn.value = menu[floorNum][i][0];
-				erm.appendChild(optn);
+				while(document.getElementById('srm').childNodes.length){
+					document.getElementById('srm').removeChild(document.getElementById('srm').childNodes[0]);
+				}
+				var srm = document.getElementById('srm');
+				var fsoptn = document.createElement('option');
+				fsoptn.innerHTML = 'Select Start Position';
+				fsoptn.value = '';
+				srm.appendChild(fsoptn);
+
+				for (var i = 0, len = menu[floorNum].length; i < len; i++) {
+					var optn = document.createElement('option');
+					optn.innerHTML = menu[floorNum][i][1];
+					optn.value = menu[floorNum][i][0];
+					srm.appendChild(optn);
+				}
+			}
+			else{
+				while(document.getElementById('srm').childNodes.length){
+					document.getElementById('srm').removeChild(document.getElementById('srm').childNodes[0]);
+				}
+				var fsoptn = document.createElement('option');
+				fsoptn.innerHTML = 'Choose a Floor First';
+				fsoptn.value = '';
+				document.getElementById('srm').appendChild(fsoptn);
+				floorNum = '';
+			}
+		}
+		else if(selectNum == 1){
+			if(document.getElementById('eflr').value != ''){
+				var iml = document.getElementById('imgLoader');
+				iml.src = '';
+				document.getElementById('bdy').removeChild(iml);
+				iml = document.createElement('img');
+				iml.id = 'imgLoader';
+				iml.data = document.getElementById('eflr').value;
+				iml.src = img[parseInt(document.getElementById('eflr').value)];
+				document.getElementById('bdy').appendChild(iml);
+				iml.onload = function () {
+					var elementHeight = heightCrossBrowser(iml);
+					pathScale = elementHeight / imgScale;// imgScale = 600
+					iml.style.height = imgScale+'px';
+					console.log('Current Image Height:'+elementHeight);
+				}
+				console.log('Current Path Scale:'+pathScale);
+				var efloorNum = parseInt(document.getElementById('eflr').value);
+				while(document.getElementById('erm').childNodes.length){
+					document.getElementById('erm').removeChild(document.getElementById('erm').childNodes[0]);
+				}
+				var erm = document.getElementById('erm');
+				var fsoptn = document.createElement('option');
+				fsoptn.innerHTML = 'Select Start Position';
+				fsoptn.value = '';
+				erm.appendChild(fsoptn);
+
+				for (var i = 0, len = menu[efloorNum].length; i < len; i++) {
+					var optn = document.createElement('option');
+					optn.innerHTML = menu[efloorNum][i][1];
+					optn.value = menu[efloorNum][i][0];
+					erm.appendChild(optn);
+				}
+			}
+			else{
+				while(document.getElementById('erm').childNodes.length){
+					document.getElementById('erm').removeChild(document.getElementById('erm').childNodes[0]);
+				}
+				var fsoptn = document.createElement('option');
+				fsoptn.innerHTML = 'Choose a Floor First';
+				fsoptn.value = '';
+				document.getElementById('erm').appendChild(fsoptn);
+				floorNum = '';
 			}
 		}
 		else{
-			floorNum = '';
+			var sflrn = parseInt(document.getElementById('flr').value),
+				eflrn = parseInt(document.getElementById('eflr').value);
+			var iml = document.getElementById('imgLoader'),
+				nxbtn = document.getElementById('nxbtn');
+			nxbtn.style.background = 'green';
+			//console.log(img[sflrn]+' '+img[eflrn]+' '+iml.src);
+			if(sflrn == parseInt(iml.data)){
+				nxbtn.innerHTML = 'Click to view Previous Step';
+				nxbtn.style.display = 'block';
+				iml.src = '';
+				floorNum = parseInt(document.getElementById('eflr').value);
+				document.getElementById('bdy').removeChild(iml);
+				iml = document.createElement('img');
+				iml.id = 'imgLoader';
+				iml.data = document.getElementById('eflr').value;
+				iml.src = img[floorNum];
+				document.getElementById('bdy').appendChild(iml);
+				iml.onload = function () {
+					var elementHeight = heightCrossBrowser(iml);
+					pathScale = elementHeight / imgScale;// imgScale = 600
+					iml.style.height = imgScale+'px';
+					console.log('Current Image Height:'+elementHeight);
+				}
+				console.log('Current Path Scale:'+pathScale);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
+				showPath(2);
+			}
+			else{
+				nxbtn.innerHTML = 'Click to view Next Step';
+				nxbtn.style.display = 'block';
+				iml.src = '';
+				floorNum = parseInt(document.getElementById('flr').value);
+				document.getElementById('bdy').removeChild(iml);
+				iml = document.createElement('img');
+				iml.id = 'imgLoader';
+				iml.data = document.getElementById('flr').value;
+				iml.src = img[floorNum];
+				document.getElementById('bdy').appendChild(iml);
+				iml.onload = function () {
+					var elementHeight = heightCrossBrowser(iml);
+					pathScale = elementHeight / imgScale;// imgScale = 600
+					iml.style.height = imgScale+'px';
+					console.log('Current Image Height:'+elementHeight);
+				}
+				console.log('Current Path Scale:'+pathScale);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
+				showPath(3);
+			}
 		}
 	}
 
+	var dres = '';
 	function dijkstra(srmv, ermv) {
 		var path = new Array(graph[floorNum].length),
 			vist = new Array(graph[floorNum].length),
@@ -1652,27 +1752,95 @@
 			res.unshift(resi);
 			resi = path[resi];
 		}
-		return res;
+		return [dist,path,res];
 	}
-
-	async function showPath() {
+	async function showPath(selectNum) {
 		removeLines();
-		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
-			var srmv = parseInt(document.getElementById('srm').value),
+		document.getElementById('nxbtn').style.display = 'none';
+		if(!selectNum && document.getElementById('srm').value != ''){
+			var srmv = parseInt(document.getElementById('srm').value);
+			dres = dijkstra(srmv,srmv);
+		}
+		if(selectNum == 2){
+			var sflr = parseInt(document.getElementById('flr').value),
 				ermv = parseInt(document.getElementById('erm').value);
-			//console.log(dijkstra(srmv,ermv));
-			drawSLine(points[floorNum][srmv][0],points[floorNum][srmv][1],
-				points[floorNum][srmv][0],points[floorNum][srmv][1]+5);
-			straitLine_i ++;
-			drawSLine(points[floorNum][ermv][0],points[floorNum][ermv][1],
-				points[floorNum][ermv][0],points[floorNum][ermv][1]+5);
-			straitLine_i ++;
-			var res = dijkstra(srmv,ermv);
-			if(res == []){
-				console.log('failed');
+			var res_cnt = 999999, res_i, tres = dijkstra(ermv,ermv);
+			var dist = tres[0], path = tres[1];
+			for (var i = 0; i < stairs[floorNum][sflr].length; i++) {
+				if(dist[stairs[floorNum][sflr][i]] < res_cnt){
+					res_cnt = dist[stairs[floorNum][sflr][i]];
+					res_i = stairs[floorNum][sflr][i];
+					sStairsP = res_i;
+				}
 			}
-			else if(res.length > 1){
-				console.log('successfull');
+			var res = new Array(), resi = ermv;
+			tres = dijkstra(res_i,res_i), dist = tres[0], path = tres[1];
+			while(path[resi] != -2){
+				res.unshift(resi);
+				resi = path[resi];
+			}
+			res.unshift(res_i);
+			console.log(res);
+			var array0 = new Array(graph[floorNum].length);
+			array0.fill(true);
+			drawIsRunning = new Array(graph[floorNum].length);
+			drawIsRunning.fill(array0);
+			drawIsRunning[res_i][ermv] = false;
+			removeLines();
+			for (var i = 1, len = res.length; i < len; i++) {
+				if(drawIsRunning[res_i][ermv]){
+					break;
+				}
+				drawSLine(
+					points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1],
+					points[floorNum][res[i]][0], points[floorNum][res[i]][1]
+					);
+				straitLine_i ++;
+				await sleep(pathDist(res[i], res[i-1])*2);
+			}
+
+			document.getElementById('nxbtn').style.display = 'block';
+			return;
+		}
+		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
+			var iml = document.getElementById('imgLoader');
+			if(document.getElementById('flr').value != iml.data){
+				iml.src = '';
+				floorNum = parseInt(document.getElementById('flr').value);
+				document.getElementById('bdy').removeChild(iml);
+				iml = document.createElement('img');
+				iml.id = 'imgLoader';
+				iml.data = document.getElementById('flr').value;
+				iml.src = img[floorNum];
+				document.getElementById('bdy').appendChild(iml);
+				iml.onload = function () {
+					var elementHeight = heightCrossBrowser(iml);
+					pathScale = elementHeight / imgScale;// imgScale = 600
+					iml.style.height = imgScale+'px';
+					console.log('Current Image Height:'+elementHeight);
+				}
+				console.log('Current Path Scale:'+pathScale);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
+			}
+			if(document.getElementById('flr').value == document.getElementById('eflr').value){
+				floorNum = parseInt(document.getElementById('flr').value);
+				var srmv = parseInt(document.getElementById('srm').value),
+					ermv = parseInt(document.getElementById('erm').value);
+				//console.log(dijkstra(srmv,ermv));
+				drawSLine(points[floorNum][srmv][0],points[floorNum][srmv][1],
+					points[floorNum][srmv][0],points[floorNum][srmv][1]+5);
+				straitLine_i ++;
+				drawSLine(points[floorNum][ermv][0],points[floorNum][ermv][1],
+					points[floorNum][ermv][0],points[floorNum][ermv][1]+5);
+				straitLine_i ++;
+				var res = new Array(), resi = ermv, path = dres[1];
+				while(path[resi] != -2){
+					res.unshift(resi);
+					resi = path[resi];
+				}
 				res.unshift(srmv);
 				console.log(res);
 				//res[2] = shortify(res[2]);
@@ -1695,6 +1863,51 @@
 					straitLine_i ++;
 					await sleep(pathDist(res[i], res[i-1])*2);
 				}
+			}
+			else{
+				var srmv = parseInt(document.getElementById('srm').value),
+					eflr = parseInt(document.getElementById('eflr').value);
+				dres = dijkstra(srmv,srmv);
+				var res_cnt = 999999, res_i, dist = dres[0];
+				for (var i = 0; i < stairs[floorNum][eflr].length; i++) {
+					if(dist[stairs[floorNum][eflr][i]] < res_cnt){
+						res_cnt = dist[stairs[floorNum][eflr][i]];
+						res_i = stairs[floorNum][eflr][i];
+						sStairsP = res_i;
+					}
+				}
+				var res = new Array(), resi = res_i, path = dres[1];
+				while(path[resi] != -2){
+					res.unshift(resi);
+					resi = path[resi];
+				}
+				res.unshift(srmv);
+				console.log(res);
+				var array0 = new Array(graph[floorNum].length);
+				array0.fill(true);
+				drawIsRunning = new Array(graph[floorNum].length);
+				drawIsRunning.fill(array0);
+				drawIsRunning[srmv][res_i] = false;
+				removeLines();
+				for (var i = 1, len = res.length; i < len; i++) {
+					if(drawIsRunning[srmv][res_i]){
+						break;
+					}
+					drawSLine(
+						points[floorNum][res[i-1]][0], points[floorNum][res[i-1]][1],
+						points[floorNum][res[i]][0], points[floorNum][res[i]][1]
+						);
+					straitLine_i ++;
+					await sleep(pathDist(res[i], res[i-1])*2);
+				}
+				if(selectNum == 3){
+					document.getElementById('nxbtn').style.background = 'green';
+				}
+				else{
+					document.getElementById('nxbtn').style.background = 'red';
+				}
+				document.getElementById('nxbtn').innerHTML = 'Click to view Next Step';
+				document.getElementById('nxbtn').style.display = 'block';
 			}
 		}
 		else{
