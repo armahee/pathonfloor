@@ -60,9 +60,8 @@
 	<img id="imgLoader" src="">
 </div>
 <script type="text/javascript">
-	//document.getElementById("srm").addEventListener("change",startRoom,false);
 
-	/* Function to return the DOM object's in crossbrowser style */
+	/* This Function Return height of a image from any browser */
 	function heightCrossBrowser(element) {
 	    /* element - DOM element */
 
@@ -81,27 +80,36 @@
 	    /* For FireFox & IE */
 	    else if(element.offsetHeight != undefined && element.offsetHeight != '' && element.offsetHeight != 0){
 	        this.height  =   element.offsetHeight;
-	    }       
-	        /*
-	            console.info(' widthWidth height:',      element.height);
-	            console.info(' clntWidth clientHeight:', element.clientHeight);
-	            console.info(' natWidth naturalHeight:', element.naturalHeight);
-	            console.info(' offstWidth offsetHeight:',element.offsetHeight);       
-	            console.info(' parseInt(this.height):',parseInt(this.height));
-	        */
+	    }
 	    return parseInt(this.height);
 
 	}
+	// Sleep function used for animation
 	function sleep(ms) {
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
-	console.log('working');
-	var straitLine_i = 0, drawIsRunning, imgScale = 600, pathScale = 1, pathWeight = '5px', floorNum = '', arrayFl, arrayGr, sStairsP;//, shortpath = 999999;
+	/*
+		Decleared variable details:
+			straitline_i is for counting how many straitline are drawn currently in the image
+			drawIsRunning is for checking that any stritline is being drawn
+			imgScale if for image height in pixel
+			pathScale is for calculating the (x,y) ratio for the current image height
+			pathWeight is for straitline Width
+			floorNum is for checking which floor is currently selected
+			sStairsP is for indicating which stair is used for the starting floor when two points are selected of defferent floor
+
+	*/
+	var straitLine_i = 0, drawIsRunning, imgScale = 600, pathScale = 1, pathWeight = '5px', floorNum = '', sStairsP;//, shortpath = 999999;
+	/*
+		Strait Line drawing function using Cartesian Geometrical position acording to the main image
+	*/
 	async function drawSLine(fromX, fromY, toX, toY) {
+		//Current (x,y) calculating acording to current height of the image
 		fromX = fromX / pathScale;
 		fromY = fromY / pathScale;
 		toX = toX / pathScale;
 		toY = toY / pathScale;
+		//Creating the strait line using div
 		var info = document.createElement('div');
 		info.style.position = 'absolute';
 		info.style.borderRadius = pathWeight;
@@ -112,7 +120,9 @@
 		info.style.zIndex = '1';
 		info.id = 'straitLine'+straitLine_i;
 		document.getElementById('bdy').appendChild(info);
+		//For Vertical line fromX and toX are equal
 		if(fromX == toX){
+			//If Strait line needs to go down
 			if(toY > fromY){
 				info.style.width = pathWeight;
 				info.style.height = '0px';
@@ -121,6 +131,7 @@
 					await sleep(5);
 				}
 			}
+			//If Strait line needs to go up
 			else if(toY < fromY){
 				info.style.top = (fromY+5)+'px';
 				info.style.width = pathWeight;
@@ -131,12 +142,15 @@
 					await sleep(5);
 				}
 			}
+			//If Strait line is just a point
 			else{
 				info.style.width = pathWeight;
 				info.style.height = pathWeight;
 			}
 		}
+		//For Hrizobntal line fromY and toY are equal
 		else if(fromY == toY){
+			//If Strait line needs to go right
 			if(toX > fromX){
 				info.style.width = '0px';
 				info.style.height = pathWeight;
@@ -145,6 +159,7 @@
 					await sleep(5);
 				}
 			}
+			//If Strait line needs to go left
 			else if(toX < fromX){
 				info.style.left = (fromX+5)+'px';
 				info.style.width = '0px';
@@ -155,18 +170,19 @@
 					await sleep(5);
 				}
 			}
+			//If Strait line is just a point
 			else{
 				info.style.width = pathWeight;
 				info.style.height = pathWeight;
 			}
 		}
+		//If given points are not of a Strait line
 		else{
 			console.log(fromX+','+fromY+' | '+toX+','+toY);
 			alert('Sorry! Unable to draw Strait Line');
 		}
-		//animate(info.id, toX, toY);
 	}
-
+	//When any selection changed previous lines should be removed
 	function removeLines() {
 		var linepar = document.getElementById('bdy');
 		while(straitLine_i){
@@ -174,7 +190,7 @@
 			linepar.removeChild(document.getElementById('straitLine'+straitLine_i));
 		}
 	}
-
+	//calculate distance between two point
 	function pathDist(srmv, ermv) {
 		if(points[floorNum][srmv][0] == points[floorNum][ermv][0]){
 			return Math.abs(points[floorNum][srmv][1]-points[floorNum][ermv][1]);
@@ -187,15 +203,6 @@
 			return -1;
 		}
 	}
-	/*drawSLine(160, 10, 590, 10);
-	straitLine_i ++;
-	drawSLine(590, 10, 590, 485);
-	straitLine_i ++;
-	drawSLine(595, 485, 165, 485);
-	straitLine_i ++;
-	drawSLine(160, 490, 160, 10);
-	straitLine_i ++;
-	setTimeout(removeLines, 3000);*/
 	var img = [
 		'groundFloor.jpg',
 		'lowerFloor.jpg',
@@ -1520,30 +1527,11 @@
 			[200,243]//249
 		]
 	];
-/*
-	var distr = '';
-	for (var i = 0; i < points.length; i++) {
-		distr += i+'<br>';
-		for (var j = 0; j < points[i].length; j++) {
-			var gflag = new Array(points[i].length);
-			gflag.fill(false);
-			distr += '	'+j+'<br>';
-			for (var k = 0; k < points[i].length; k++) {
-				if((points[i][j][0] == points[i][k][0] || points[i][j][1] == points[i][k][1])
-					&& j != k){
-					gflag[k] = true;
-				}
-			}
-			for (var k = 0; k < graph[i][j].length; k++) {
-				if(gflag[graph[i][j][k]] == false){
-					distr += '		'+graph[i][j][k]+'<br>';
-				}
-			}
-		}
-	}
-	//console.log(ggraph);
-	document.getElementById('display').innerHTML = distr;*/
 
+	//When floor will be change this function will be executed.
+	//For the starting floor selectNum will be 0
+	//For the ending floor selecNum will be 1
+	//For Next Step button selectNum will be 2
 	function changeFloor(selectNum) {
 		if(floorNum != ''){
 			var array0 = new Array(graph[floorNum].length);
@@ -1551,13 +1539,19 @@
 			drawIsRunning = new Array(graph[floorNum].length);
 			drawIsRunning.fill(array0);
 		}
+		//Removing previous lines while changing a floor
 		removeLines();
+		//If Next Step button is visiable it will be hidden
 		document.getElementById('nxbtn').style.display = 'none';
+		//If no floor selected then image will be removed
 		if(document.getElementById('flr').value == '' && document.getElementById('eflr').value == ''){
 			document.getElementById('imgLoader').src = '';
 		}
+		// If selectNum value 0 this condition will true
 		if(!selectNum){
+			//checking is there any floor selected
 			if(document.getElementById('flr').value != ''){
+				//Image Loading part
 				document.getElementById('header').style.display = 'none';
 				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				var iml = document.getElementById('imgLoader');
@@ -1575,11 +1569,17 @@
 					console.log('Current Image Height:'+elementHeight);
 				}
 				console.log('Current Path Scale:'+pathScale);
+				/*
+				  Filling up drawIsRunning with true
+				  Suppose point 67 to point 46 a strait line is being drawn and then drawIsRunning[67][47] is equal to false
+				  if drawIsRunning[67][47] became true then drawer function will stop drawing
+				  that means every index true means nothing is being drawn
+				*/
 				var array0 = new Array(graph[floorNum].length);
 				array0.fill(true);
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
-
+				//putting room list to the menu for new selected floor
 				while(document.getElementById('srm').childNodes.length){
 					document.getElementById('srm').removeChild(document.getElementById('srm').childNodes[0]);
 				}
@@ -1598,6 +1598,7 @@
 				document.getElementById('header').style.display = 'block';
 				document.getElementById('display').innerHTML = '';
 			}
+			//If no floor selected menu will be removed
 			else{
 				while(document.getElementById('srm').childNodes.length){
 					document.getElementById('srm').removeChild(document.getElementById('srm').childNodes[0]);
@@ -1610,7 +1611,9 @@
 			}
 		}
 		else if(selectNum == 1){
+			//checking is there any floor selected
 			if(document.getElementById('eflr').value != ''){
+				//Image Loading part
 				document.getElementById('header').style.display = 'none';
 				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
 				var iml = document.getElementById('imgLoader');
@@ -1628,6 +1631,7 @@
 					console.log('Current Image Height:'+elementHeight);
 				}
 				console.log('Current Path Scale:'+pathScale);
+				//putting room list to the menu for new selected floor
 				var efloorNum = parseInt(document.getElementById('eflr').value);
 				while(document.getElementById('erm').childNodes.length){
 					document.getElementById('erm').removeChild(document.getElementById('erm').childNodes[0]);
@@ -1647,6 +1651,7 @@
 				document.getElementById('header').style.display = 'block';
 				document.getElementById('display').innerHTML = '';
 			}
+			//If no floor selected menu will be removed
 			else{
 				while(document.getElementById('erm').childNodes.length){
 					document.getElementById('erm').removeChild(document.getElementById('erm').childNodes[0]);
@@ -1658,13 +1663,15 @@
 				floorNum = '';
 			}
 		}
+		//Onclick next button
 		else{
 			var sflrn = parseInt(document.getElementById('flr').value),
 				eflrn = parseInt(document.getElementById('eflr').value);
 			var iml = document.getElementById('imgLoader'),
 				nxbtn = document.getElementById('nxbtn');
+			//As Next Step button is clicked making it green
 			nxbtn.style.background = 'green';
-			//console.log(img[sflrn]+' '+img[eflrn]+' '+iml.src);
+			//this condition is for checking that user is in the first step
 			if(sflrn == parseInt(iml.data)){
 				document.getElementById('header').style.display = 'none';
 				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
@@ -1690,10 +1697,12 @@
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
 				document.getElementById('display').innerHTML = 'Please wait while showing path...';
+				//showpath is the drawer of Strait Line
 				showPath(2);
 				document.getElementById('header').style.display = 'block';
 				document.getElementById('display').innerHTML = '';
 			}
+			//this condition is for checking that user is in the second step
 			else{
 				document.getElementById('header').style.display = 'none';
 				document.getElementById('display').innerHTML = 'Please wait while loading Image...';
@@ -1719,15 +1728,21 @@
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
 				document.getElementById('display').innerHTML = 'Please wait while showing path...';
+				//showpath is the drawer of Strait Line
 				showPath(3);
 				document.getElementById('header').style.display = 'block';
 				document.getElementById('display').innerHTML = '';
 			}
 		}
 	}
-
+	/*
+		dijkstra shortest path algorithm implemented here
+		dres is for storing dijkstra result
+	*/
 	var dres = '';
-	function dijkstra(srmv, ermv) {
+	function dijkstra(srmv) {
+		//srmv is the start point
+		//this algo calculate all the path from a starting point
 		var path = new Array(graph[floorNum].length),
 			vist = new Array(graph[floorNum].length),
 			dist = new Array(graph[floorNum].length),
@@ -1770,24 +1785,28 @@
 				}
 			}
 		}
-		var res = new Array(), resi = ermv;
-		while(path[resi] != -2){
-			res.unshift(resi);
-			resi = path[resi];
-		}
-		return [dist,path,res];
+		//returning two array
+		//dist array stored for getting distance to all points from srmv(staring point)
+		//path array stored to get path to any point from srmv(staring point)
+		return [dist,path];
 	}
+	//showPath called when selection chaged of room menu
 	async function showPath(selectNum) {
+		//previous lines will be removed when selection chaged of room menu
 		removeLines();
+		//Hiding Next Step button
 		document.getElementById('nxbtn').style.display = 'none';
+		//calculating and storing all the point distance and path for a new staring point
 		if(!selectNum && document.getElementById('srm').value != ''){
 			var srmv = parseInt(document.getElementById('srm').value);
-			dres = dijkstra(srmv,srmv);
+			dres = dijkstra(srmv);
 		}
+		//selectNum equals to 2 when showPath funtion will be called from Next Step button
 		if(selectNum == 2){
 			var sflr = parseInt(document.getElementById('flr').value),
 				ermv = parseInt(document.getElementById('erm').value);
-			var res_cnt = 999999, res_i, tres = dijkstra(ermv,ermv);
+			//getting result from dijkstra path
+			var res_cnt = 999999, res_i, tres = dijkstra(ermv);
 			var dist = tres[0], path = tres[1];
 			for (var i = 0; i < stairs[floorNum][sflr].length; i++) {
 				if(dist[stairs[floorNum][sflr][i]] < res_cnt){
@@ -1797,7 +1816,7 @@
 				}
 			}
 			var res = new Array(), resi = ermv;
-			tres = dijkstra(res_i,res_i), dist = tres[0], path = tres[1];
+			tres = dijkstra(res_i), dist = tres[0], path = tres[1];
 			while(path[resi] != -2){
 				res.unshift(resi);
 				resi = path[resi];
@@ -1810,6 +1829,7 @@
 			drawIsRunning.fill(array0);
 			drawIsRunning[res_i][ermv] = false;
 			removeLines();
+			//Drawing starting
 			for (var i = 1, len = res.length; i < len; i++) {
 				if(drawIsRunning[res_i][ermv]){
 					break;
@@ -1821,6 +1841,7 @@
 				straitLine_i ++;
 				await sleep(pathDist(res[i], res[i-1])*2);
 			}
+			//when staring point and ending points are same
 			if(res.length == 1){
 				drawSLine(
 					points[floorNum][res[0]][0], points[floorNum][res[0]][1],
@@ -1830,7 +1851,9 @@
 			document.getElementById('nxbtn').style.display = 'block';
 			return;
 		}
+		//checking a valide starting and ending points are selected
 		if(document.getElementById('srm').value != '' && document.getElementById('erm').value != ''){
+			//checking is the correct image loaded in the loader
 			var iml = document.getElementById('imgLoader');
 			if(document.getElementById('flr').value != iml.data){
 				document.getElementById('header').style.display = 'none';
@@ -1857,17 +1880,12 @@
 				document.getElementById('header').style.display = 'block';
 				document.getElementById('display').innerHTML = '';
 			}
+			//Conding for checking are those starting point and ending point from same floor
 			if(document.getElementById('flr').value == document.getElementById('eflr').value){
 				floorNum = parseInt(document.getElementById('flr').value);
 				var srmv = parseInt(document.getElementById('srm').value),
 					ermv = parseInt(document.getElementById('erm').value);
-				//console.log(dijkstra(srmv,ermv));
-				drawSLine(points[floorNum][srmv][0],points[floorNum][srmv][1],
-					points[floorNum][srmv][0],points[floorNum][srmv][1]+5);
-				straitLine_i ++;
-				drawSLine(points[floorNum][ermv][0],points[floorNum][ermv][1],
-					points[floorNum][ermv][0],points[floorNum][ermv][1]+5);
-				straitLine_i ++;
+				//getting result from dijkstra path. (dres[1] = path)
 				var res = new Array(), resi = ermv, path = dres[1];
 				while(path[resi] != -2){
 					res.unshift(resi);
@@ -1875,15 +1893,13 @@
 				}
 				res.unshift(srmv);
 				console.log(res);
-				//res[2] = shortify(res[2]);
-				//console.log(res[2]);
-				//console.log('----------------------'+arrayGr[29]);
 				var array0 = new Array(graph[floorNum].length);
 				array0.fill(true);
 				drawIsRunning = new Array(graph[floorNum].length);
 				drawIsRunning.fill(array0);
 				drawIsRunning[srmv][ermv] = false;
 				removeLines();
+				//Drawing starting
 				for (var i = 1, len = res.length; i < len; i++) {
 					if(drawIsRunning[srmv][ermv]){
 						break;
@@ -1895,6 +1911,7 @@
 					straitLine_i ++;
 					await sleep(pathDist(res[i], res[i-1])*2);
 				}
+				//when staring and ending points are same
 				if(res.length == 1){
 					drawSLine(
 						points[floorNum][res[0]][0], points[floorNum][res[0]][1],
@@ -1902,10 +1919,12 @@
 					straitLine_i ++;
 				}
 			}
+			//when two defferent floor's rooms are selected
 			else{
 				var srmv = parseInt(document.getElementById('srm').value),
 					eflr = parseInt(document.getElementById('eflr').value);
-				dres = dijkstra(srmv,srmv);
+				dres = dijkstra(srmv);
+				//getting the nearest stairs
 				var res_cnt = 999999, res_i, dist = dres[0];
 				for (var i = 0; i < stairs[floorNum][eflr].length; i++) {
 					if(dist[stairs[floorNum][eflr][i]] < res_cnt){
@@ -1927,6 +1946,7 @@
 				drawIsRunning.fill(array0);
 				drawIsRunning[srmv][res_i] = false;
 				removeLines();
+				//drawing starting from staring point to nearest stair
 				for (var i = 1, len = res.length; i < len; i++) {
 					if(drawIsRunning[srmv][res_i]){
 						break;
@@ -1938,12 +1958,14 @@
 					straitLine_i ++;
 					await sleep(pathDist(res[i], res[i-1])*2);
 				}
+				//when starting point and ending points are same
 				if(res.length == 1){
 					drawSLine(
 						points[floorNum][res[0]][0], points[floorNum][res[0]][1],
 						points[floorNum][res[0]][0], points[floorNum][res[0]][1]);
 					straitLine_i ++;
 				}
+				//checking is Next Step button clicked
 				if(selectNum == 3){
 					document.getElementById('nxbtn').style.background = 'green';
 				}
@@ -1954,6 +1976,7 @@
 				document.getElementById('nxbtn').style.display = 'block';
 			}
 		}
+		//If no starting point or no ending point will be selected then previous line will be removed
 		else{
 			var array0 = new Array(graph[floorNum].length);
 			array0.fill(true);
@@ -1963,7 +1986,7 @@
 		}
 	}
 	/*
-	// mouse down handler
+	// get Cartesian Giometrical (x,y) on mouse click
 	function onMouseDown(evt) {
 	  var mousex = event.clientX;//(event.clientX / window.innerWidth) * 2 - 1;
 	  var mousey = event.clientY;//-(event.clientY / window.innerHeight) * 2 + 1;
