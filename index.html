@@ -4,23 +4,58 @@
 	<title>AR Mahee Project</title>
 	<style type="text/css">
 		body {
-			background-color: #000;
+			color: #2f3640;
+			font-weight: 600;
+			background-color:#2f3640;
 			margin: 0px;
 		}
 		#hdholder {
 			position: absolute;
-			width: 400px;
+			top: 50%;
+			left: 1%;
+			transform: translateY(-50%);
+			width: 440px;
 			background-color: white;
-			padding: 20px;
+			border-radius: 30px;
+			padding: 30px 5px;
+		}
+		#header{
+			margin-left: 13px;
 		}
 		#bdy {
 			left: 500px;
 			position: absolute;
+			top: 50%;
+    		transform: translateY(-50%);
 			width: 62%
 		}
+		select{
+			border-radius: 10px;
+			color: #2f3640;
+			padding: 3px 6px;
+			margin-bottom: 6px;
+			border: .5px solid #2f3640;
+		}
+		.fxd{
+			width: 263px;
+ 			font-size: 12.1px;
+		}
+		option{
+			background: #2f3640 ;
+			color: #ffffff;
+		}
+		#header select #srm{
+			width: 600px;
+		}
 		#nxbtn {
+			border-radius: 40px;
+			padding: 5px 15px;
+			margin-left: 110px;
+			border: none;
+			color: #ffffff;
+			font-weight: 600;
 			display: none;
-			background: red;
+			background: #739690;
 		}
 	</style>
 </head>
@@ -28,7 +63,7 @@
 <div id="hdholder">
 	<pre id='display'></pre>
 	<div id='header'>
-		<label for="flr">Choose a floor:</label>
+		<label for="flr">Choose Starting floor:</label>
 		<select id='flr' onchange="changeFloor(0)">
 			<option selected="" value="">Select a floor</option>
 			<option value="0">Ground Floor</option>
@@ -37,10 +72,10 @@
 			<option value="3">Second Floor</option>
 		</select><br>
 		<label for="srm" id="srml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
-		<select id="srm" onchange="showPath(0)">
+		<select class="fxd" id="srm" onchange="showPath(0)">
 			<option value="">Choose a Floor First</option>
 		</select><br><br>
-		<label for="eflr">Choose a floor for end position:</label>
+		<label for="eflr">Choose Ending floor:</label>
 		<select id='eflr' onchange="changeFloor(1)">
 			<option selected="" value="">Select a floor</option>
 			<option value="0">Ground Floor</option>
@@ -48,8 +83,8 @@
 			<option value="2">First Floor</option>
 			<option value="3">Second Floor</option>
 		</select><br>
-		<label for="erm" id="erml">&nbsp;&nbsp;&nbsp;&nbsp;Select Start Position: </label>
-		<select id="erm" onchange="showPath(1)">
+		<label for="erm" id="erml">&nbsp;&nbsp;&nbsp;&nbsp;Select End Position: </label>
+		<select class="fxd" id="erm" onchange="showPath(1)">
 			<option 	value="">Choose a Floor First</option>
 		</select><br><br>
 		<button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button>
@@ -115,7 +150,7 @@
 		info.style.borderRadius = pathWeight;
 		info.style.left = fromX+'px';
 		info.style.top = fromY+'px';
-		info.style.backgroundColor = 'red';
+		info.style.backgroundColor = '#06111c';
 		info.style.opacity = '70%';
 		info.style.zIndex = '1';
 		info.id = 'straitLine'+straitLine_i;
@@ -1669,8 +1704,8 @@
 				eflrn = parseInt(document.getElementById('eflr').value);
 			var iml = document.getElementById('imgLoader'),
 				nxbtn = document.getElementById('nxbtn');
-			//As Next Step button is clicked making it green
-			nxbtn.style.background = 'green';
+			//As Next Step button is clicked making it blue
+			nxbtn.style.background = '#2f3640';
 			//this condition is for checking that user is in the first step
 			if(sflrn == parseInt(iml.data)){
 				document.getElementById('header').style.display = 'none';
@@ -1973,10 +2008,10 @@
 				}
 				//checking is Next Step button clicked
 				if(selectNum == 3){
-					document.getElementById('nxbtn').style.background = 'green';
+					document.getElementById('nxbtn').style.background = '#2f3640';
 				}
 				else{
-					document.getElementById('nxbtn').style.background = 'red';
+					document.getElementById('nxbtn').style.background = '#739690';
 				}
 				document.getElementById('nxbtn').innerHTML = 'Click to view Next Step';
 				document.getElementById('nxbtn').style.display = 'block';
