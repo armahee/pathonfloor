@@ -89,8 +89,8 @@ option{
 }
 #nxbtn {
     font-family: 'calibiri';
-    position: relative;
-    top: 82vh;
+    position: absolute;
+    top: 88vh;
     border-radius: 40px;
     padding: 8px 15px;
     margin-left: 105px;
