@@ -1,0 +1,130 @@
+@font-face {
+    font-family: calibiri;
+    src: url(Calibri\ Regular.ttf);
+}
+
+body {
+    font-family: calibiri!important;
+    color: #2f3640;
+    font-weight: 600;
+    background-color:#2f3640;
+    margin: 0px;
+}
+.map{
+    position: relative;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#hdholder {
+    position: absolute;
+    left: 0;
+    height: 100vh;
+    width: 400px;
+    background-color: white;
+}
+#hdholder h2{
+    position: absolute;
+    top: 15vh;
+    font-size: 35px;
+    width: 100%;
+    text-align: center;
+}
+#header{
+    margin-left: 13px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#bdy {
+    left: 500px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 62%
+}
+select{
+    font-family: 'calibiri';
+    border-radius: 10px;
+    color: #2f3640;
+    padding: 3px 6px;
+    margin-bottom: 6px;
+    border: .5px solid #2f3640;
+}
+.fxd{
+    position: absolute;
+    height: 50px;
+    width: 90%;
+    left: 3%;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.flr{
+    position: absolute;
+    top: -70%;
+
+}
+.cng-flr{
+    position: absolute;
+    top: 80%;
+}
+
+.pth1{
+    position: absolute;
+    top: -15%;
+}
+.pth2{
+    position: absolute;
+    top: 135%;
+}
+option{
+    font-family: 'calibiri';
+    background: #2f3640 ;
+    color: #ffffff;
+}
+#header select #srm{
+    width: 600px;
+}
+#nxbtn {
+    font-family: 'calibiri';
+    position: relative;
+    top: 82vh;
+    border-radius: 40px;
+    padding: 8px 15px;
+    margin-left: 105px;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    display: none;
+    background: #739690;
+}
+.lbl_pos{
+    position: relative;
+    background: white;
+    left: 25px;
+    top: 23px;
+    z-index: 2000;
+}
+.lbl_start1{
+    position: relative;
+    background: white;
+    left: 25px;
+    top: -43px;
+    z-index: 2000;
+}
+.lbl_start2{
+    position: relative;
+    background: white;
+    left: 25px;
+    top: 67px;
+    z-index: 2000;
+}
+.lbl_flr{
+    position: relative;
+    background: white;
+    left: 25px;
+    top: -90px;
+    z-index: 2000;
+}
