@@ -7,12 +7,13 @@ body {
     font-family: calibiri!important;
     color: #2f3640;
     font-weight: 600;
-    background-color:#2f3640;
+    //background-color:#2f3640;
+    background: white;
     margin: 0px;
 }
 .map{
-    position: relative;
-    top: 5%;
+    position: absolute;
+    top: 10vh;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -21,11 +22,12 @@ body {
     left: 0;
     height: 100vh;
     width: 400px;
-    background-color: white;
+    background-color: lightgray;
 }
 #hdholder h2{
+    margin: 0;
     position: absolute;
-    top: 15vh;
+    top: 20vh;
     font-size: 35px;
     width: 100%;
     text-align: center;
@@ -73,11 +75,11 @@ select{
 
 .pth1{
     position: absolute;
-    top: -15%;
+    top: -8%;
 }
 .pth2{
     position: absolute;
-    top: 135%;
+    top: 144%;
 }
 option{
     font-family: 'calibiri';
@@ -102,29 +104,29 @@ option{
 }
 .lbl_pos{
     position: relative;
-    background: white;
-    left: 25px;
-    top: 23px;
+    background: transparent;
+    left: 16px;
+    top: 14px;
     z-index: 2000;
 }
 .lbl_start1{
     position: relative;
-    background: white;
-    left: 25px;
-    top: -43px;
-    z-index: 2000;
+    background: transparent;
+    left: 16px;
+    top: -47px;
+    z-index: -1;
 }
 .lbl_start2{
     position: relative;
-    background: white;
-    left: 25px;
-    top: 67px;
-    z-index: 2000;
+    background: transparent;
+    left: 16px;
+    top: 69px;
+    z-index: -1;
 }
 .lbl_flr{
-    position: relative;
-    background: white;
-    left: 25px;
-    top: -90px;
+    position: absolute;
+    background: transparent;
+    left: 16px;
+    top: -100px;
     z-index: 2000;
 }
