@@ -127,6 +127,6 @@ option{
     position: absolute;
     background: transparent;
     left: 16px;
-    top: -100px;
+    top: -105px;
     z-index: 2000;
 }
