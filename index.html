@@ -6,11 +6,17 @@
 </head>
 <body>
 <div id="hdholder">
+	<!-- top icon -->
 	<img class="map" src="map.png" alt="map">
+	<!-- Title -->
 	<h2>Kilburn Virtual Map</h2>
+	<!-- Next Step button will appear when position will be selected from two defferet floor -->
 	<button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button>
+	<!-- Display will be used for showing any messege -->
 	<pre id='display'></pre>
+	<!-- all the option selection elements are in header div -->
 	<div id='header'>
+		<!-- starting position choosing elemets -->
 		<label class="lbl_flr" for="flr">Choose Starting floor</label>
 		<select class="flr fxd" id='flr' onchange="changeFloor(0)">
 			<option selected="" value="">Select a floor</option>
@@ -22,7 +28,9 @@
 		<label class="lbl_start1" for="srm" id="srml">Select Start Position </label>
 		<select class="fxd pth1" id="srm" onchange="showPath(0)">
 			<option value="">Choose a Floor First</option>
+			<!-- more option will be added by javascript when a floor will be selected -->
 		</select><br><br>
+		<!-- ending position choosing elemets -->
 		<label class="lbl_pos" for="eflr">Choose Ending floor</label>
 		<select class="cng-flr fxd" id='eflr' onchange="changeFloor(1)">
 			<option selected="" value="">Select a floor</option>
@@ -34,11 +42,11 @@
 		<label class="lbl_start2" for="erm" id="erml">Select End Position </label>
 		<select class="fxd pth2" id="erm" onchange="showPath(1)">
 			<option value="">Choose a Floor First</option>
+			<!-- more option will be added by javascript when a floor will be selected -->
 		</select><br><br>
-		<!-- <button id="nxbtn" onclick="changeFloor(2)">Click to view Next Step</button> -->
 	</div>
 </div>
-
+<!-- inside the image will loaded -->
 <div id='bdy'>
 	<img id="imgLoader" src="">
 </div>
