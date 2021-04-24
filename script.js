@@ -389,28 +389,28 @@ var menu = [
 
 var stairs = [
 	[
-		[5,39],
-		[5,39],
-		[5,39],
-		[5,39]
-	],
-	[
-		[5,25,78,88],
-		[25,78],
-		[5,25,78,93],
-		[25,78,93]
-	],
-	[
-		[24,63],
-		[24,63,76],
 		[],
-		[65,90]
+		[4,5,39],
+		[4,5],
+		[4]
 	],
 	[
-		[59,218],
-		[59,218],
-		[59,218,31,120],
-		[59,218]
+		[0,5,86],
+		[],
+		[0,5,91,72],
+		[0]
+	],
+	[
+		[22,23],
+		[22,23,57,75],
+		[],
+		[22,63,90]
+	],
+	[
+		[29],
+		[29],
+		[29,121,31],
+		[]
 	]
 ];
 
@@ -1750,17 +1750,9 @@ async function showPath(selectNum) {
 		var sflr = parseInt(document.getElementById('flr').value),
 			ermv = parseInt(document.getElementById('erm').value);
 		//getting result from dijkstra path
-		var res_cnt = 999999, res_i, tres = dijkstra(ermv);
-		var dist = tres[0], path = tres[1];
-		for (var i = 0; i < stairs[floorNum][sflr].length; i++) {
-			if(dist[stairs[floorNum][sflr][i]] < res_cnt){
-				res_cnt = dist[stairs[floorNum][sflr][i]];
-				res_i = stairs[floorNum][sflr][i];
-				sStairsP = res_i;
-			}
-		}
+		var res_i = stairs[floorNum][sflr][sStairsP];
+		var tres = dijkstra(res_i), dist = tres[0], path = tres[1];
 		var res = new Array(), resi = ermv;
-		tres = dijkstra(res_i), dist = tres[0], path = tres[1];
 		while(path[resi] != -2){
 			res.unshift(resi);
 			resi = path[resi];
@@ -1874,7 +1866,7 @@ async function showPath(selectNum) {
 				if(dist[stairs[floorNum][eflr][i]] < res_cnt){
 					res_cnt = dist[stairs[floorNum][eflr][i]];
 					res_i = stairs[floorNum][eflr][i];
-					sStairsP = res_i;
+					sStairsP = i;
 				}
 			}
 			var res = new Array(), resi = res_i, path = dres[1];
